@@ -29,7 +29,7 @@ There are two things you can do about this warning:
   (package-refresh-contents)
   (package-install 'use-package))
 
-(org-babel-load-file (expand-file-name "~/Projekty/barracuda/emacs/myinit.org"))
+(org-babel-load-file (expand-file-name "~/Projekty/forge/myinit.org"))
 
 ;;=========================================================================================================
 (custom-set-variables
@@ -40,7 +40,7 @@ There are two things you can do about this warning:
  '(column-number-mode t)
  '(package-selected-packages
    (quote
-    (flycheck-rtags company-irony-c-headers company-rtags move-text neotree immaterial-theme multi-term cmake-mode levenshtein rtags cmake-ide company-irony flycheck-irony irony flycheck borg color-theme-sanityinc-solarized use-package try solaire-mode org-bullets doom-themes counsel auto-complete ace-window)))
+    (srefactor spaceline-all-the-icons spaceline flycheck-rtags company-irony-c-headers company-rtags move-text neotree immaterial-theme multi-term cmake-mode levenshtein rtags cmake-ide company-irony flycheck-irony irony flycheck borg color-theme-sanityinc-solarized use-package try solaire-mode org-bullets doom-themes counsel auto-complete ace-window)))
  '(python-shell-interpreter "python")
  '(show-paren-mode t)
  '(tool-bar-mode nil))
@@ -49,8 +49,9 @@ There are two things you can do about this warning:
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Fira Code" :foundry "CTDB" :slant normal :weight normal :height 120 :width normal))))
+ '(default ((t (:family "Fira Code Retina" :foundry "outline" :slant normal :weight normal :height 120 :width normal))))
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
 ;;; .emacs ends here
 (put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
