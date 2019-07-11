@@ -106,6 +106,9 @@ lisp evaluator know about things like function and symbol declarations.
   (setq column-number-mode t)
   ;; C-c C-d will duplicate current line
   (global-set-key "\C-c\C-d" "\C-a\C- \C-n\M-w\C-y")
+  (when window-system (global-hl-line-mode t))
+  (when window-system (global-prettify-symbols-mode t))
+  (setq linum-format "%4d \u2502 ")
  #+END_SRC
 
 * Small packages
@@ -133,6 +136,11 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t
     :config
     (which-key-mode))
+
+  (use-package beacon
+    :ensure t
+    :init
+    (beacon-mode 1))
 #+END_SRC
 
 * Words
@@ -313,6 +321,34 @@ lisp evaluator know about things like function and symbol declarations.
   :ensure t
   :bind ("M-s" . avy-goto-char))
 
+#+END_SRC
+
+* Sql
+
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region
+    :ensure t)
+
+  (use-package sql-indent
+    :ensure t)
+
+  (defun sql-indent-string ()
+    "Indents the string under the cursor as SQL."
+    (interactive)
+    (save-excursion
+      (er/mark-inside-quotes)
+      (let* ((text (buffer-substring-no-properties (region-beginning) (region-end)))
+             (pos (region-beginning))
+             (column (progn (goto-char pos) (current-column)))
+             (formatted-text (with-temp-buffer
+                               (insert text)
+                               (delete-trailing-whitespace)
+                               (sql-indent-buffer)
+                               (replace-string "\n" (concat "\n" (make-string column (string-to-char " "))) nil (point-min) (point-max))
+                               (buffer-string))))
+        (delete-region (region-beginning) (region-end))
+        (goto-char pos)
+        (insert formatted-text))))
 #+END_SRC
 
 * C++ development
