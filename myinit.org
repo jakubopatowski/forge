@@ -93,7 +93,8 @@ lisp evaluator know about things like function and symbol declarations.
 
 #+END_SRC
 
-* config edit/reload
+* Config edit/reload
+
 #+BEGIN_SRC emacs-lisp
   (defun open-config ()
     (interactive)
@@ -104,8 +105,8 @@ lisp evaluator know about things like function and symbol declarations.
     (interactive)
     (org-babel-load-file (expand-file-name "~/Projekty/forge/myinit.org")))
   (global-set-key (kbd "C-c r") 'reload-config)
-
 #+END_SRC
+
 * Small tweaks
 
 #+BEGIN_SRC emacs-lisp
@@ -165,11 +166,27 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t
     :init
     (rainbow-mode 1))
+
+  (use-package sudo-edit
+    :ensure t
+    :bind
+    ("s-e" . sudo-edit))
 #+END_SRC
 
 * Words
 
 #+BEGIN_SRC emacs-lisp
+  (defun kill-whole-word ()
+    (interactive)
+    (backward-word)
+    (kill-word 1))
+  (global-set-key (kbd "C-c w w") 'kill-whole-word)
+
+  (use-package hungry-delete
+    :ensure t
+    :config
+    (global-hungry-delete-mode))
+
   (use-package dictionary
     :ensure t)
 #+END_SRC
@@ -256,10 +273,12 @@ lisp evaluator know about things like function and symbol declarations.
 * Org mode setup
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (setq org-src-window-setup 'current-window)
+
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
 * Smartparens
