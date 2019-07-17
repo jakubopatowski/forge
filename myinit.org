@@ -93,6 +93,19 @@ lisp evaluator know about things like function and symbol declarations.
 
 #+END_SRC
 
+* config edit/reload
+#+BEGIN_SRC emacs-lisp
+  (defun open-config ()
+    (interactive)
+    (find-file "~/Projekty/forge/myinit.org"))
+  (global-set-key (kbd "C-c e") 'open-config)
+
+  (defun reload-config ()
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/Projekty/forge/myinit.org")))
+  (global-set-key (kbd "C-c r") 'reload-config)
+
+#+END_SRC
 * Small tweaks
 
 #+BEGIN_SRC emacs-lisp
@@ -109,6 +122,9 @@ lisp evaluator know about things like function and symbol declarations.
   (when window-system (global-hl-line-mode t))
   (when window-system (global-prettify-symbols-mode t))
   (setq linum-format "%4d \u2502 ")
+
+  (global-set-key (kbd "C-x b") 'ibuffer)
+  (setq ibuffer-expert t)
  #+END_SRC
 
 * Small packages
@@ -123,8 +139,8 @@ lisp evaluator know about things like function and symbol declarations.
     (progn
       (global-set-key [remap other-window] 'ace-window)
       (custom-set-faces
-      '(aw-leading-char-face
-        ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+       '(aw-leading-char-face
+         ((t (:inherit ace-jump-face-foreground :height 3.0)))))
       ))
 
   (use-package move-text
@@ -141,6 +157,14 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t
     :init
     (beacon-mode 1))
+
+  (use-package treemacs
+    :ensure t)
+
+  (use-package rainbow-mode
+    :ensure t
+    :init
+    (rainbow-mode 1))
 #+END_SRC
 
 * Words
@@ -287,39 +311,45 @@ lisp evaluator know about things like function and symbol declarations.
 
 * Better search
 
+[[;;http://oremacs.com/swiper/][swiper homepage]]
+
 #+BEGIN_SRC emacs-lisp
-(use-package counsel
-  :ensure t
-  )
+  (use-package counsel
+    :ensure t
+    )
 
-(use-package ivy
-  :ensure t
-  :diminish (ivy-mode)
-  :bind (("C-x b" . ivy-switch-buffer))
-  :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffer t)
-  (setq ivy-display-style 'fancy))
-
-;;http://oremacs.com/swiper/
-(use-package swiper
-  :ensure try
-  :bind (("C-s" . swiper)
-	 ;;("C-c C-r" . ivy-resume)
-	 ("M-x" . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file))
-  :config
-  (progn
+  (use-package ivy
+    :ensure t
+    :diminish (ivy-mode)
+    :bind (("C-x b" . ivy-switch-buffer))
+    :config
     (ivy-mode 1)
     (setq ivy-use-virtual-buffer t)
-    (setq ivy-display-style 'fancy)
-    ;;(define-key read-expression-map (kbd C-r) 'counsel-expression-history)
-    ))
+    (setq ivy-display-style 'fancy))
 
-;;https://github.com/abo-abo/avy
-(use-package avy
-  :ensure t
-  :bind ("M-s" . avy-goto-char))
+  (use-package avy
+    :ensure t
+    :bind
+    ("M-s" . avy-goto-char))
+
+  (use-package swiper
+    :ensure try
+    :bind (("C-s" . swiper)
+           ;;("C-c C-r" . ivy-resume)
+           ("M-x" . counsel-M-x)
+           ("C-x C-f" . counsel-find-file))
+    :config
+    (progn
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffer t)
+      (setq ivy-display-style 'fancy)
+      ;;(define-key read-expression-map (kbd C-r) 'counsel-expression-history)
+      ))
+
+  ;;https://github.com/abo-abo/avy
+  (use-package avy
+    :ensure t
+    :bind ("M-s" . avy-goto-char))
 
 #+END_SRC
 
@@ -415,6 +445,9 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     (add-hook 'python-mode-hook 'flycheck-mode)
     (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
     (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
+
+  (use-package lsp-treemacs
+    :ensure t)
 
   (use-package company-lsp
     :ensure t
