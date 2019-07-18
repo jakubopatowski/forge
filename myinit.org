@@ -22,73 +22,73 @@ lisp evaluator know about things like function and symbol declarations.
 
 * Dashboard
 
-[[https://github.com/emacs-dashboard/emacs-dashboard][dashboard homepage]]
-[[https://github.com/purcell/page-break-lines][page-break-lines homepage]]
+  [[https://github.com/emacs-dashboard/emacs-dashboard][dashboard homepage]]
+  [[https://github.com/purcell/page-break-lines][page-break-lines homepage]]
 
-#+BEGIN_SRC emacs-lisp
-      (use-package page-break-lines
-        :ensure t
-        :config
-        (global-page-break-lines-mode))
+  #+BEGIN_SRC emacs-lisp
+        (use-package page-break-lines
+          :ensure t
+          :config
+          (global-page-break-lines-mode))
 
-      (use-package dashboard
-        :ensure t
-        :config
-        (dashboard-setup-startup-hook)
-        (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+        (use-package dashboard
+          :ensure t
+          :config
+          (dashboard-setup-startup-hook)
+          (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
-        ;; Set the title
-        (setq dashboard-banner-logo-title "Hello Jakub!")
-        ;; Set the banner
-        (setq dashboard-startup-banner 'logo)
-        ;; Value can be
-        ;; 'official which displays the official emacs logo
-        ;; 'logo which displays an alternative emacs logo
-        ;; 1, 2 or 3 which displays one of the text banners
-        ;; "path/to/your/image.png" which displays whatever image you would prefer
+          ;; Set the title
+          (setq dashboard-banner-logo-title "Hello Jakub!")
+          ;; Set the banner
+          (setq dashboard-startup-banner 3)
+          ;; Value can be
+          ;; 'official which displays the official emacs logo
+          ;; 'logo which displays an alternative emacs logo
+          ;; 1, 2 or 3 which displays one of the text banners
+          ;; "path/to/your/image.png" which displays whatever image you would prefer
 
-        ;; Content is not centered by default. To center, set
-        (setq dashboard-center-content t)
+          ;; Content is not centered by default. To center, set
+          (setq dashboard-center-content t)
 
-        ;; To disable shortcut "jump" indicators for each section, set
-        (setq dashboard-show-shortcuts nil)
+          ;; To disable shortcut "jump" indicators for each section, set
+          (setq dashboard-show-shortcuts nil)
 
-        ;; To customize which widgets are displayed, you can use the following snippet
+          ;; To customize which widgets are displayed, you can use the following snippet
 
-        (setq dashboard-items '( (recents  . 5)
-                                 (bookmarks . 5)
-                                 (projects . 5)
-                                 (agenda . 5)
-                                 (registers . 5)))
+          (setq dashboard-items '( (recents  . 10)
+                                   (bookmarks . 5)
+                                   (projects . 5)
+                                   (agenda . 5)
+                                   (registers . 5)))
 
-        (setq dashboard-set-heading-icons t)
-        (setq dashboard-set-file-icons t)
-        (setq dashboard-set-navigator t)
-        (setq dashboard-set-init-info t)
+          (setq dashboard-set-heading-icons t)
+          (setq dashboard-set-file-icons t)
+          (setq dashboard-set-navigator t)
+          (setq dashboard-set-init-info t)
 
-        (dashboard-modify-heading-icons '((recents . "file-text")
-                                          (bookmarks . "book")))
+          (dashboard-modify-heading-icons '((recents . "file-text")
+                                            (bookmarks . "book")))
 
-        (setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
-                                                           :height 1.1
-                                                           :v-adjust -0.05
-                                                           :face 'font-lock-keyword-face))
+          (setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
+                                                             :height 1.1
+                                                             :v-adjust -0.05
+                                                             :face 'font-lock-keyword-face))
 
-        ;; Format: "(icon title help action face prefix suffix)"
-        (setq dashboard-navigator-buttons
-              `(;; line1
-                (
-                 ;; item 1
-                 (,(all-the-icons-octicon "mark-github" :height 1.1 :v-adjust 0.0)
-                  "Homepage"
-                  "Browse github.com"
-                  (lambda (&rest _) (browse-url "https://github.com")))
-                 ;; item 2
-                 ("★" "Star" "Show stars" (lambda (&rest _) (show-stars)) warning)
-                 ;;item 3
-                 ("?" "" "?/h" #'show-help nil "<" ">")
-             )))
-  )
+          ;; Format: "(icon title help action face prefix suffix)"
+          (setq dashboard-navigator-buttons
+                `(;; line1
+                  (
+                   ;; item 1
+                   (,(all-the-icons-octicon "mark-github" :height 1.1 :v-adjust 0.0)
+                    "Homepage"
+                    "Browse github.com"
+                    (lambda (&rest _) (browse-url "https://github.com")))
+                   ;;item 2
+                   (,(all-the-icons-octicon "info" :height 1.1 :v-adjust 0.0)
+                    ""
+                    "?/h"
+                    (lambda (&rest _) (info-emacs-manual)))
+                   ))))
 
 #+END_SRC
 
@@ -472,6 +472,17 @@ lisp evaluator know about things like function and symbol declarations.
         (insert formatted-text))))
 #+END_SRC
 
+* Project management
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :config
+    (projectile-mode +1)
+    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+#+END_SRC
+
 * C++ development
 
 Based on [[https://microsoft.github.io/language-server-protocol/][language server protocol]].
@@ -490,6 +501,10 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
 
   (setq c-default-style "k&r"
         c-basic-offset 4)
+
+  (use-package qt-pro-mode
+    :ensure t
+    :mode("\\.pro\\'" "\\.pri\\'"))
 
   (use-package srefactor
     :ensure t
