@@ -221,6 +221,9 @@ lisp evaluator know about things like function and symbol declarations.
     :bind (("M-p" . move-text-up)
            ("M-n" . move-text-down)))
 
+  (use-package spinner
+    :ensure t)
+
   (use-package which-key
     :ensure t
     :config
@@ -472,6 +475,13 @@ lisp evaluator know about things like function and symbol declarations.
         (insert formatted-text))))
 #+END_SRC
 
+* General programming
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t)
+#+END_SRC
+
 * C++ development
 
 Based on [[https://microsoft.github.io/language-server-protocol/][language server protocol]].
@@ -594,15 +604,6 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
       (lsp--set-configuration lsp-cfg)))
 
   (add-hook 'lsp-after-initialize-hook 'lsp-set-cfg)
-
-    ;; (use-package elpy
-    ;;   :ensure t
-    ;;   :config
-    ;;   (elpy-enable)
-    ;;   (setq python-shell-interpreter "jupyter"
-    ;;         python-shell-interpreter-args "console --simple-prompt"
-    ;;         python-shell-prompt-detect-failure-warning nil)
-    ;;   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
   (use-package py-autopep8
     :ensure t
