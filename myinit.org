@@ -611,6 +611,28 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save))
 #+END_SRC
 
+* Java development
+
+[[https://github.com/emacs-lsp/lsp-java][lsp-java homepage]]
+
+#+begin_src emacs-lisp
+  (use-package lsp-java
+    :ensure t
+    :after lsp
+    :config 
+    (dap-mode t)
+    (dap-ui-mode t))
+
+  (use-package dap-mode
+    :ensure t
+    :after lsp-mode
+    :config
+    (dap-mode t)
+    (dap-ui-mode t)
+    (dap-tooltip-mode t)
+    (tooltip-mode t))
+#+end_src
+
 * Yasnippet
 
 #+BEGIN_SRC emacs-lisp
