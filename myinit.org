@@ -629,27 +629,27 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     :config
     (dap-mode t)
     (dap-ui-mode t)
+    ;; enables mouse hover support
     (dap-tooltip-mode t)
-    (tooltip-mode t))
+    ;; use tooltips for mouse hover
+    ;; if it is not enabled 'dap-mode' will use the minibuffer.
+    (tooltip-mode t)
+    (require 'dap-python)
+    (require 'dap-java)
+    (require 'dap-lldb))
 #+end_src
 
 * Yasnippet
 
 #+BEGIN_SRC emacs-lisp
-    (use-package yasnippet-snippets
-      :ensure t)
+  (use-package yasnippet-snippets
+    :ensure t)
 
-    (use-package yasnippet
-      :ensure t
-      :config
-      (yas-reload-all)
-      (add-hook 'c-mode-hook 'yas-minor-mode)
-      (add-hook 'c++-mode-hook 'yas-minor-mode)
-      (add-hook 'objc-mode-hook 'yas-minor-mode)
-      (add-hook 'java-mode-hook 'yas-minor-mode)
-      (add-hook 'python-mode-hook 'yas-minor-mode)
-      (add-hook 'org-mode-hook 'yas-minor-mode)
-      (add-hook 'latex-mode-hook 'yas-minor-mode))
+  (use-package yasnippet
+    :ensure t
+    :config
+    (yas-reload-all)
+    (add-hook 'prog-mode-hook #'yas-monor-mode))
 #+END_SRC
 
 
