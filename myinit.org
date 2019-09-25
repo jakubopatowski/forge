@@ -182,6 +182,9 @@ lisp evaluator know about things like function and symbol declarations.
 * Small tweaks
 
 #+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+  (load "spinner")
+
   (setq ingibit-startup-message t)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
@@ -203,6 +206,10 @@ lisp evaluator know about things like function and symbol declarations.
 * Small packages
 
 #+BEGIN_SRC emacs-lisp
+  ;; to avoid problem 'Failed to download 'gnu' archive
+  (use-package gnu-elpa-keyring-update
+    :ensure t)
+
   (use-package try
     :ensure t)
 
@@ -649,7 +656,7 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     :ensure t
     :config
     (yas-reload-all)
-    (add-hook 'prog-mode-hook #'yas-monor-mode))
+    (add-hook 'prog-mode-hook #'yas-minor-mode))
 #+END_SRC
 
 
