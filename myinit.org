@@ -648,17 +648,19 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
 
 * Yasnippet
 
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet-snippets
-    :ensure t)
+[[https://github.com/joaotavora/yasnippet][yasnippet homepage]]
 
+#+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
     :config
     (yas-reload-all)
     (add-hook 'prog-mode-hook #'yas-minor-mode))
-#+END_SRC
 
+  (use-package yasnippet-snippets
+    :ensure t
+    :after yasnippet)
+#+END_SRC
 
 #+RESULTS:
 
