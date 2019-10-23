@@ -358,18 +358,27 @@ lisp evaluator know about things like function and symbol declarations.
 * Org mode setup
 
 [[http://cachestocaches.com/2018/6/org-literate-programming/][LITERATE PROGRAMMING WITH ORG-MODE]]
+[[https://github.com/hniksic/emacs-htmlize][htmlize homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
 
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '(
-     (python . t)
-     ))
+   '((python . t)
+     (emacs-lisp . t)
+     (shell . t)
+     (C . t)
+     (js . t)
+     (dot . t)
+     (org . t)
+     (latex . t)))
 
   ;; Syntax highlight in #+BEGIN_SRS blocks
   (setq org-src-fontify-natively t)
+
+  (use-package htmlize
+    :ensure t)
 
   (use-package org-bullets
     :ensure t
