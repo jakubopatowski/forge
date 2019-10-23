@@ -253,6 +253,9 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t
     :bind
     ("s-e" . sudo-edit))
+
+  (use-package origami
+    :ensure t)
 #+END_SRC
 
 * Words
@@ -364,11 +367,10 @@ lisp evaluator know about things like function and symbol declarations.
    '(
      (python . t)
      ))
+
   ;; Syntax highlight in #+BEGIN_SRS blocks
-  ;;(setq org-src-fontify-natively t)
+  (setq org-src-fontify-natively t)
 
-
-  
   (use-package org-bullets
     :ensure t
     :config
@@ -378,6 +380,9 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t)
 
   (use-package org-ref
+    :ensure t)
+
+  (use-package org-pomodoro
     :ensure t)
 #+END_SRC
 
@@ -500,37 +505,37 @@ lisp evaluator know about things like function and symbol declarations.
         (insert formatted-text))))
 #+END_SRC
 
+* Git 
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :bind
+    (("C-x g" . magit-status)))
+
+  (setq magit-status-margin
+        '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+
+  (use-package git-timemachine
+    :ensure t)
+
+  (use-package git-gutter
+    :ensure t
+    :init
+    (global-git-gutter-mode +1))
+#+END_SRC
 * General programming
+
+[[https://www.flycheck.org/en/latest/][flycheck homepage]]
+lsp based on [[https://microsoft.github.io/language-server-protocol/][language server protocol]].
+[[https://microsoft.github.io/language-server-protocol/specification][Language Server Protocol Specification]]
+[[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
+[[https://github.com/emacs-lsp/lsp-ui][lsp-ui homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :ensure t)
-#+END_SRC
 
-* C++ development
-
-Based on [[https://microsoft.github.io/language-server-protocol/][language server protocol]].
-[[https://sarcasm.github.io/notes/dev/compilation-database.html][compilation database manual]]
-[[https://www.flycheck.org/en/latest/][flycheck homepage]]
-[[https://microsoft.github.io/language-server-protocol/specification][Language Server Protocol Specification]]
-[[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
-[[https://github.com/emacs-lsp/lsp-ui][lsp-ui homepage]]
-[[https://github.com/MaskRay/ccls][ccls homepage]]
-[[https://clang.llvm.org/docs/ClangFormatStyleOptions.html][Clang style options manual]]
-
-#+BEGIN_SRC emacs-lisp
-  ;;use only spaces in indentation
-  (progn
-    (setq-default indent-tabs-mode nil))
-
-  (setq c-default-style "k&r"
-        c-basic-offset 4)
-
-  (use-package qt-pro-mode
-    :ensure t
-    :mode("\\.pro\\'" "\\.pri\\'"))
-
-  (use-package srefactor
+(use-package srefactor
     :ensure t
     :config
     (semantic-mode 1)
@@ -545,7 +550,7 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     :config
     (add-hook 'after-init-hook 'global-company-mode)
     (setq company-ide-delay 0)
-    (setq company-minimum-prefix-length 1)
+    (setq company-minimum-prefix-length 2)
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
     (define-key company-active-map (kbd "C-n") #'company-select-next)
@@ -554,6 +559,8 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
   (use-package lsp-mode
     :ensure t
     :commands lsp
+    :bind
+    (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
     :config
     (require 'lsp-clients)
     (add-hook 'prog-mode-hook 'lsp)
@@ -566,15 +573,34 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
                       :server-id 'pyls)))
 
   (use-package lsp-ui
+    :after lsp-mode
+    :diminish
     :ensure t
     :commands lsp-ui-mode
+    :custom-face
+    (lsp-ui-doc-background ((t (:background nil))))
+    (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+    :bind
+    (:map lsp-ui-mode-map
+          ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+          ([remap xref-find-references] . lsp-ui-peek-find-references)
+          ("C-c u" . lsp-ui-imenu))
+    :custom
+    (lsp-ui-doc-enable t)
+    (lsp-ui-doc-header t)
+    (lsp-ui-doc-include-signature t)
+    (lsp-ui-doc-position 'top)
+    (lsp-ui-doc-border (face-foreground 'default))
+    (lsp-ui-sideline-enable nil)
+    (lsp-ui-sideline-ignore-duplicate t)
+    (lsp-ui-sideline-show-code-actions nil)
     :config
-    (setq lsp-ui-sideline-ignore-duplicate t)
+    (setq lsp-ui-doc-use-webkit t)
+    (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+      (setq mode-line-format nil))
     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
     (add-hook 'c++-mode-hook 'flycheck-mode)
-    (add-hook 'python-mode-hook 'flycheck-mode)
-    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
+    (add-hook 'python-mode-hook 'flycheck-mode))
 
   (use-package lsp-treemacs
     :ensure t)
@@ -584,6 +610,25 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     :commands company-lsp
     :config
     (push 'company-lsp company-backends))
+#+END_SRC
+
+* C++ development
+
+[[https://sarcasm.github.io/notes/dev/compilation-database.html][compilation database manual]]
+[[https://github.com/MaskRay/ccls][ccls homepage]]
+[[https://clang.llvm.org/docs/ClangFormatStyleOptions.html][Clang style options manual]]
+
+#+BEGIN_SRC emacs-lisp
+  ;;use only spaces in indentation
+  (progn
+    (setq-default indent-tabs-mode nil))
+
+  (setq c-default-style "k&r"
+        c-basic-offset 4)
+
+  (use-package qt-pro-mode
+    :ensure t
+    :mode("\\.pro\\'" "\\.pri\\'"))
 
   (use-package ccls
     :ensure t
@@ -673,15 +718,15 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
-    :config
-    (yas-reload-all)
+    :init
+    ;;(yas-reload-all)
     (yas-global-mode 1))
-    ;;(add-hook 'prog-mode-hook #'yas-minor-mode)
-    ;;(add-hook 'org-mode-hook #'yas-minor-mode))
 
   (use-package yasnippet-snippets
-    :ensure t
-    :after yasnippet)
+    :ensure t)
+
+  (use-package yasnippet-classic-snippets
+    :ensure t)
 #+END_SRC
 
 #+RESULTS:
