@@ -1,4 +1,5 @@
 
+
   Author: Jakub Opatowski
   mailto: [[jakub.opatowski@gmail.com]]
 
@@ -26,69 +27,73 @@ lisp evaluator know about things like function and symbol declarations.
   [[https://github.com/purcell/page-break-lines][page-break-lines homepage]]
 
   #+BEGIN_SRC emacs-lisp
-        (use-package page-break-lines
-          :ensure t
-          :config
-          (global-page-break-lines-mode))
+    (use-package page-break-lines
+      :ensure t
+      :config
+      (global-page-break-lines-mode))
 
-        (use-package dashboard
-          :ensure t
-          :config
-          (dashboard-setup-startup-hook)
-          (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+    (use-package all-the-icons
+      :ensure t)
 
-          ;; Set the title
-          (setq dashboard-banner-logo-title "Hello Jakub!")
-          ;; Set the banner
-          (setq dashboard-startup-banner 3)
-          ;; Value can be
-          ;; 'official which displays the official emacs logo
-          ;; 'logo which displays an alternative emacs logo
-          ;; 1, 2 or 3 which displays one of the text banners
-          ;; "path/to/your/image.png" which displays whatever image you would prefer
+    (use-package dashboard
+      :ensure t
+      :after (all-the-icons)
+      :config
+      (dashboard-setup-startup-hook)
+      (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
-          ;; Content is not centered by default. To center, set
-          (setq dashboard-center-content t)
+      ;; Set the title
+      (setq dashboard-banner-logo-title "Hello Jakub!")
+      ;; Set the banner
+      (setq dashboard-startup-banner 3)
+      ;; Value can be
+      ;; 'official which displays the official emacs logo
+      ;; 'logo which displays an alternative emacs logo
+      ;; 1, 2 or 3 which displays one of the text banners
+      ;; "path/to/your/image.png" which displays whatever image you would prefer
 
-          ;; To disable shortcut "jump" indicators for each section, set
-          (setq dashboard-show-shortcuts nil)
+      ;; Content is not centered by default. To center, set
+      (setq dashboard-center-content t)
 
-          ;; To customize which widgets are displayed, you can use the following snippet
+      ;; To disable shortcut "jump" indicators for each section, set
+      (setq dashboard-show-shortcuts nil)
 
-          (setq dashboard-items '( (recents  . 10)
-                                   (bookmarks . 5)
-                                   (projects . 5)
-                                   (agenda . 5)
-                                   (registers . 5)))
+      ;; To customize which widgets are displayed, you can use the following snippet
 
-          (setq dashboard-set-heading-icons t)
-          (setq dashboard-set-file-icons t)
-          (setq dashboard-set-navigator t)
-          (setq dashboard-set-init-info t)
+      (setq dashboard-items '( (recents  . 10)
+			       (bookmarks . 5)
+			       (projects . 5)
+			       (agenda . 5)
+			       (registers . 5)))
 
-          (dashboard-modify-heading-icons '((recents . "file-text")
-                                            (bookmarks . "book")))
+      (setq dashboard-set-heading-icons t)
+      (setq dashboard-set-file-icons t)
+      (setq dashboard-set-navigator t)
+      (setq dashboard-set-init-info t)
 
-          (setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
-                                                             :height 1.1
-                                                             :v-adjust -0.05
-                                                             :face 'font-lock-keyword-face))
+      (dashboard-modify-heading-icons '((recents . "file-text")
+					(bookmarks . "book")))
 
-          ;; Format: "(icon title help action face prefix suffix)"
-          (setq dashboard-navigator-buttons
-                `(;; line1
-                  (
-                   ;; item 1
-                   (,(all-the-icons-octicon "mark-github" :height 1.1 :v-adjust 0.0)
-                    "Homepage"
-                    "Browse github.com"
-                    (lambda (&rest _) (browse-url "https://github.com")))
-                   ;;item 2
-                   (,(all-the-icons-octicon "info" :height 1.1 :v-adjust 0.0)
-                    ""
-                    "?/h"
-                    (lambda (&rest _) (info-emacs-manual)))
-                   ))))
+      (setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
+							 :height 1.1
+							 :v-adjust -0.05
+							 :face 'font-lock-keyword-face))
+
+      ;; Format: "(icon title help action face prefix suffix)"
+      (setq dashboard-navigator-buttons
+	    `(;; line1
+	      (
+	       ;; item 1
+	       (,(all-the-icons-octicon "mark-github" :height 1.1 :v-adjust 0.0)
+		"Homepage"
+		"Browse github.com"
+		(lambda (&rest _) (browse-url "https://github.com")))
+	       ;;item 2
+	       (,(all-the-icons-octicon "info" :height 1.1 :v-adjust 0.0)
+		""
+		"?/h"
+		(lambda (&rest _) (info-emacs-manual)))
+	       ))))
 
 #+END_SRC
 
@@ -181,7 +186,12 @@ lisp evaluator know about things like function and symbol declarations.
 
 * Small tweaks
 
+[[https://github.com/Malabarba/spinner.el][spinner homepage]]
+
 #+BEGIN_SRC emacs-lisp
+  (use-package spinner
+    :ensure t)
+
   (add-to-list 'load-path "~/.emacs.d/lisp/")
   (load "spinner")
 
@@ -258,6 +268,29 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t)
 #+END_SRC
 
+* Yasnippet
+
+[[https://github.com/joaotavora/yasnippet][yasnippet homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :config
+    (yas-reload-all)
+    ;;(yas-global-mode 1)
+    (add-hook 'prog-mode-hook #'yas-minor-mode))
+
+  (use-package yasnippet-snippets
+    :ensure t
+    :after (yasnippet))
+
+  (use-package yasnippet-classic-snippets
+    :ensure t
+    :after (yasnippet))
+#+END_SRC
+
+#+RESULTS:
+
 * Words
 
 #+BEGIN_SRC emacs-lisp
@@ -267,13 +300,12 @@ lisp evaluator know about things like function and symbol declarations.
     (kill-word 1))
   (global-set-key (kbd "C-c w w") 'kill-whole-word)
 
-  (use-package hungry-delete
+  (use-package smart-hungry-delete
     :ensure t
-    :config
-    (global-hungry-delete-mode))
-
-  (use-package dictionary
-    :ensure t)
+    :bind (("<backspace>" . smart-hungry-delete-backward-char)
+           ("C-d" . smart-hungry-delete-forward-char))
+    :defer nil ;; dont defer so we can add our functions to hooks 
+    :config (smart-hungry-delete-add-default-hooks))
 #+END_SRC
 
 * Theme
@@ -532,6 +564,11 @@ lisp evaluator know about things like function and symbol declarations.
     :init
     (global-git-gutter-mode +1))
 #+END_SRC
+* SVN 
+#+begin_src emacs-lisp
+  (use-package dsvn
+    :ensure t)
+#+end_src
 * General programming
 
 [[https://www.flycheck.org/en/latest/][flycheck homepage]]
@@ -612,7 +649,8 @@ lsp based on [[https://microsoft.github.io/language-server-protocol/][language s
     (add-hook 'python-mode-hook 'flycheck-mode))
 
   (use-package lsp-treemacs
-    :ensure t)
+    :ensure t
+    :after (yasnippet))
 
   (use-package company-lsp
     :ensure t
@@ -641,6 +679,7 @@ lsp based on [[https://microsoft.github.io/language-server-protocol/][language s
 
   (use-package ccls
     :ensure t
+    :after (yasnippet)
     :hook
     ((c-mode c++-mode objc-mode) .
      (lambda () (require 'ccls) (lsp)))
@@ -719,25 +758,5 @@ lsp based on [[https://microsoft.github.io/language-server-protocol/][language s
     (require 'dap-java)
     (require 'dap-lldb))
 #+end_src
-
-* Yasnippet
-
-[[https://github.com/joaotavora/yasnippet][yasnippet homepage]]
-
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :init
-    ;;(yas-reload-all)
-    (yas-global-mode 1))
-
-  (use-package yasnippet-snippets
-    :ensure t)
-
-  (use-package yasnippet-classic-snippets
-    :ensure t)
-#+END_SRC
-
-#+RESULTS:
 
 
