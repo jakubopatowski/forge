@@ -289,29 +289,35 @@ lisp evaluator know about things like function and symbol declarations.
     :after (yasnippet))
 #+END_SRC
 
-#+RESULTS:
-
 * Words
 
 #+BEGIN_SRC emacs-lisp
-  (defun kill-whole-word ()
-    (interactive)
-    (backward-word)
-    (kill-word 1))
-  (global-set-key (kbd "C-c w w") 'kill-whole-word)
+   (defun kill-whole-word ()
+     (interactive)
+     (backward-word)
+     (kill-word 1))
+   (global-set-key (kbd "C-c w w") 'kill-whole-word)
 
   (use-package smart-hungry-delete
-    :ensure t
-    :bind (("<backspace>" . smart-hungry-delete-backward-char)
-           ("C-d" . smart-hungry-delete-forward-char))
-    :defer nil ;; dont defer so we can add our functions to hooks 
-    :config (smart-hungry-delete-add-default-hooks))
+    :if (>= emacs-major-version 25)
+    :bind 
+    (:map prog-mode-map
+          ("<backspace>" .
+           smart-hungry-delete-backward-char)
+          ("C-d" .
+           smart-hungry-delete-forward-char))
+    :hook
+    ((prog-mode . smart-hungry-delete-default-prog-mode-hook)
+     (c-mode-common . smart-hungry-delete-default-c-mode-common-hook)
+     (python-mode . smart-hungry-delete-default-c-mode-common-hook)
+     (text-mode . smart-hungry-delete-default-text-mode-hook)))
 #+END_SRC
 
 * Theme
 
 [[https://github.com/hlissner/emacs-doom-themes][doom-theme homepage]]
 [[https://github.com/seagle0128/doom-modeline][doom-modeline homepage]]
+[[https://github.com/hlissner/emacs-solaire-mode][soraire-mode homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
@@ -320,23 +326,36 @@ lisp evaluator know about things like function and symbol declarations.
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
     ;; ..:: THEMES ::..
-    ;;(load-theme 'doom-nova t)
     ;;(load-theme 'doom-one t)
     ;;(load-theme 'doom-one-light t)
     ;;(load-theme 'doom-vibrant t)
+    ;;(load-theme 'doom-acario-dark t)
+    ;;(load-theme 'doom-acario-light t)
     ;;(load-theme 'doom-city-lights t)
+    ;;(load-theme 'doom-challenger-deep t)
     ;;(load-theme 'doom-dracula t)
+    ;;(load-theme 'doom-fairy-floss t)
+    ;;(load-theme 'doom-gruvbox t)
     ;;(load-theme 'doom-Iosvkem t)
+    ;;(load-theme 'doom-laserwave t)
     ;;(load-theme 'doom-molokai t)
+    ;;(load-theme 'doom-moonlight t)
     ;;(load-theme 'doom-nord t)
     ;;(load-theme 'doom-nord-light t)
+    ;;(load-theme 'doom-nova t)
+    ;;(load-theme 'doom-oceanic-next t)
     ;;(load-theme 'doom-opera t)
     ;;(load-theme 'doom-opera-light t)
-    ;;(load-theme 'doom-nova t)
+    ;;(load-theme 'doom-outrun-electric t)
+    ;;(load-theme 'doom-palenight t)
     (load-theme 'doom-peacock t)
+    ;;(load-theme 'doom-snazzy t)
+    ;;(load-theme 'doom-solarized-dark t)
     ;;(load-theme 'doom-solarized-light t)
     ;;(load-theme 'doom-sourcerer t)
     ;;(load-theme 'doom-spacegrey t)
+    ;;(load-theme 'doom-tomorrow-day t)
+    ;;(load-theme 'doom-wilmersdorf t)
     ;;(load-theme 'doom-tomorrow-night t)
     ;;(load-theme 'doom-mono-dark t)
     ;;(load-theme 'doom-mono-light t)
@@ -358,18 +377,35 @@ lisp evaluator know about things like function and symbol declarations.
   ;;  :config
   ;;  (spaceline-all-the-icons-theme))
   ;;
-  
-   (use-package doom-modeline
+
+  (use-package doom-modeline
      :ensure t
      :hook (after-init . doom-modeline-mode)
      :config
+     (setq ingibit-compacting-font-caches t)
+     (setq doom-modeline-project-detection 'projectile)
      (setq doom-modeline-buffer-file-name-style 'relative-to-project)
-     (setq doom-modeline-icon t)
+     (setq doom-modeline-icon (display-graphic-p))
      (setq doom-modeline-major-mode-icon t)
      (setq doom-modeline-major-mode-color-icon t)
      (setq doom-modeline-buffer-state-icon t)
      (setq doom-modeline-buffer-modification-icon t)
-     (setq doom-modeline-minor-modes nil))
+     (setq doom-modeline-minor-modes (featurep 'minions))
+     (setq doom-modeline-enable-word-count nil)
+     (setq doom-modeline-buffer-encoding t)
+     (setq doom-modeline-github t)
+     (setq doom-modeline-github-interval (* 30 60))
+     (setq doom-modeline-lsp t)
+     (setq doom-modeline-env-version t)
+     (setq doom-modeline-env-enable-python t))
+
+;;  (use-package solaire-mode
+;;    :hook
+;;    ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+;;    (minibuffer-setup . solaire-mode-in-minibuffer)
+;;    :config
+;;    (solaire-global-mode +1)
+;;    (solaire-mode-swap-bg))
 #+END_SRC
 
 * Neotree
@@ -391,6 +427,7 @@ lisp evaluator know about things like function and symbol declarations.
 
 [[http://cachestocaches.com/2018/6/org-literate-programming/][LITERATE PROGRAMMING WITH ORG-MODE]]
 [[https://github.com/hniksic/emacs-htmlize][htmlize homepage]]
+[[https://github.com/jonnay/org-beautify-theme][org-beautify-theme homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
@@ -430,48 +467,100 @@ lisp evaluator know about things like function and symbol declarations.
 * Smartparens
 
 [[https://github.com/Fuco1/smartparens][Smartparens homepage]]
+[[https://matthewbauer.us/bauer/#packages][smartparens configuration]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package smartparens 
-    :ensure t
-    :config
-    (use-package smartparens-config)
-    (smartparens-global-mode t)
-    (show-smartparens-global-mode t)
-    :bind
-    (
-     ("C-<down>" . sp-down-sexp)
-     ("C-<up>" . sp-up-sexp)
-     ("M-<down>" . sp-backward-down-sexp)
-     ("M-<up>" . sp-backward-up-sexp)
-     ("C-M-a" . sp-beginning-of-sexp)
-     ("C-M-e" . sp-end-of-sexp)
-   
-     ("C-M-f" . sp-forward-sexp)
-     ("C-M-b" . sp-backward-sexp)
-     ("C-M-n" . sp-next-sexp)
-     ("C-M-p" . sp-previous-sexp)
-   
-     ("C-M-k" . sp-kill-sexp)
-     ("C-k" . sp-kill-hybrid-sexp)
-     ("M-k" . sp-backward-kill-sexp)
-     ("C-M-w" . sp-copy-sexp)
-   
-     ("C-M-d" . delete-sexp)
-     ("M-[" . sp-backward-unwrap-sexp)
-     ("M-]" . sp-unwrap-sexp)
-   
-     ("C-x C-t" . sp-transpose-hybrid-sexp)
-   
-     ("C-c ("  . wrap-with-parens)
-     ("C-c ["  . wrap-with-brackets)
-     ("C-c {"  . wrap-with-braces)
-     ("C-c '"  . wrap-with-single-quotes)
-     ("C-c \"" . wrap-with-double-quotes)
-     ("C-c _"  . wrap-with-underscores)
-     ("C-c `"  . wrap-with-back-quotes)
-     )
-    )
+    (use-package smartparens
+      :ensure t
+      :preface
+      (autoload 'sp-local-pair "smartparens")
+      (autoload 'sp-local-tag "smartparens")
+      :hook
+      (((prog-mode
+         web-mode
+         html-mode) . smartparens-mode)
+       ((prog-mode
+         emacs-lisp-mode
+         inferior-emacs-lisp-mode
+         ielm-mode
+         lisp-mode
+         inferior-lisp-mode
+         lisp-interaction-mode
+         eval-expression-minibuffer-setup) . smartparens-strict-mode)
+       ((prog-mode
+         emacs-lisp-mode
+         inferior-emacs-lisp-mode
+         ielm-mode
+         lisp-mode
+         inferior-lisp-mode
+         lisp-interaction-mode
+         org-mode) . show-smartparens-mode))
+      :bind
+      (:map smartparens-mode-map
+            ("C-M-f" . sp-forward-sexp)
+            ("C-M-b" . sp-backward-sexp)
+            ("C-M-u" . sp-backward-up-sexp)
+            ("C-M-d" . sp-down-sexp)
+            ("C-M-p" . sp-backward-down-sexp)
+            ("C-M-n" . sp-up-sexp)
+            ("M-s" . sp-splice-sexp) 
+            ("M-<up>" . sp-splice-sexp-killing-backward)
+            ("M-<down>" . sp-splice-sexp-killing-forward)
+            ("M-r" . sp-splice-sexp-killing-around)
+            ("M-(" . sp-wrap-round)
+            ("C-)" . sp-forward-slurp-sexp)
+            ("C-<right>" . sp-forward-slurp-sexp)
+            ("C-}" . sp-forward-barf-sexp)
+            ("C-<left>" . sp-forward-barf-sexp)
+            ("C-(" . sp-backward-slurp-sexp)
+            ("C-M-<left>" . sp-backward-slurp-sexp)
+            ("C-{" . sp-backward-barf-sexp)
+            ("C-M-<right>" . sp-backward-barf-sexp)
+            ("M-S" . sp-split-sexp)
+            ("M-j" . sp-join-sexp))     
+      :custom
+      (sp-escape-quotes-after-insert nil)
+      :config
+      (autoload 'sp-with-modes "smartparens" "" nil 'macro)
+      (use-package smartparens-config
+        :ensure nil
+        :demand)
+
+      (sp-with-modes 'org-mode
+        (sp-local-pair "*" "*"
+                       :actions '(insert wrap)
+                       :unless '(sp-point-after-word-p sp-point-at-bol-p)
+                       :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
+        (sp-local-pair "_" "_" :unless '(sp-point-after-word-p)
+                       :wrap "C-_")
+        (sp-local-pair "/" "/" :unless '(sp-point-after-word-p)
+                       :post-handlers '(("[d1]" "SPC")))
+        (sp-local-pair "~" "~" :unless '(sp-point-after-word-p)
+                       :post-handlers '(("[d1]" "SPC")))
+        (sp-local-pair "=" "=" :unless '(sp-point-after-word-p)
+                       :post-handlers '(("[d1]" "SPC")))
+        (sp-local-pair "«" "»"))
+
+      (sp-with-modes '(java-mode c++-mode)
+        (sp-local-pair "{" nil
+                       :post-handlers '(("||\n[i]" "RET")))
+        (sp-local-pair "/*" "*/"
+                       :post-handlers '((" | " "SPC")
+                                        ("* ||\n[i]" "RET"))))
+
+      (sp-with-modes '(markdown-mode gfm-mode rst-mode)
+        (sp-local-pair "*" "*" :bind "C-*")
+        (sp-local-tag "2" "**" "**")
+        (sp-local-tag "s" "```scheme" "```")
+        (sp-local-tag "<"  "<_>" "</_>"
+                      :transform 'sp-match-sgml-tags))
+
+      (sp-local-pair 'emacs-lisp-mode "`" nil
+                     :when '(sp-in-string-p))
+      (sp-local-pair 'clojure-mode "`" "`"
+                     :when '(sp-in-string-p))
+      (sp-local-pair 'minibuffer-inactive-mode "'" nil
+                     :actions nil))
 #+END_SRC
 
 * Better search
