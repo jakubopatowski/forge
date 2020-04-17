@@ -1,0 +1,608 @@
+
+Author: Jakub Opatowski
+mailto: [[jakub.opatowski@gmail.com][jakub.opatowski@gmail.com]]
+
+* Introduction
+** How to use 'use-package'?
+
+[[https://github.com/jwiegley/use-package][use-package homepage]]
+The use-package macro allows you to isolate package configuration in your .emacs
+file in a way that is both performance-oriented and, well, tidy. I created it 
+because I have over 80 packages that I use in Emacs, and things were getting 
+difficult to manage. Yet with this utility my total load time is around 2 seconds, 
+with no loss of functionality!
+
+* Basic setup
+
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (show-paren-mode 1)
+  (setq make-backup-files nil) ;Stop creating backup~ files.
+  (setq auto-save-default nil) ;Stop creating #autosave# files.
+  (when window-system (global-hl-line-mode t))
+  (when window-system (global-prettify-symbols-mode t))
+  (setq ibuffer-expert t)
+
+  ;; setup windows keymap
+  (setq w32-pass-lwindow-to-system nil)
+  (setq w32-lwindow-modifier 'super) ; Left Windows key
+
+  (setq w32-pass-rwindow-to-system nil)
+  (setq w32-rwindow-modifier 'super) ; Right Windows key
+#+END_SRC
+
+* The look
+** Theme
+
+[[https://github.com/hlissner/emacs-doom-themes][doom-theme homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :init
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	  doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    ;; ..:: THEMES ::..
+    ;; flagship themes
+    ;;(load-theme 'doom-one t)
+    ;;(load-theme 'doom-one-light t)
+    ;;(load-theme 'doom-vibrant t)
+    ;; additional themes
+    ;;(load-theme 'doom-acario-dark t)
+    ;;(load-theme 'doom-acario-light t)
+    ;;(load-theme 'doom-city-lights t)
+    ;;(load-theme 'doom-challenger-deep t)
+    ;;(load-theme 'doom-dark+ t)
+    ;;(load-theme 'doom-dracula t)
+    ;;(load-theme 'doom-ephemeral t)
+    ;;(load-theme 'doom-fairy-floss t)
+    ;;(load-theme 'doom-gruvbox t)
+    ;;(load-theme 'doom-horizon t)
+    ;;(load-theme 'doom-Iosvkem t)
+    ;;(load-theme 'doom-laserwave t)
+    ;;(load-theme 'doom-material t)
+    ;;(load-theme 'doom-manegarm t)
+    ;;(load-theme 'doom-molokai t)
+    ;;(load-theme 'doom-monokai-classic t)
+    ;;(load-theme 'doom-monokai-pro t)
+    ;;(load-theme 'doom-moonlight t)
+    ;;(load-theme 'doom-nord t)
+    ;;(load-theme 'doom-nord-light t)
+    ;;(load-theme 'doom-nova t)
+    ;;(load-theme 'doom-oceanic-next t)
+    ;;(load-theme 'doom-opera t)
+    ;;(load-theme 'doom-opera-light t)
+    ;;(load-theme 'doom-outrun-electric t)
+    ;;(load-theme 'doom-palenight t)
+    (load-theme 'doom-peacock t)
+    ;;(load-theme 'doom-rouge t)
+    ;;(load-theme 'doom-snazzy t)
+    ;;(load-theme 'doom-solarized-dark t)
+    ;;(load-theme 'doom-solarized-light t)
+    ;;(load-theme 'doom-sourcerer t)
+    ;;(load-theme 'doom-spacegrey t)
+    ;;(load-theme 'doom-tomorrow-day t)
+    ;;(load-theme 'doom-tomorrow-night t)
+    ;;(load-theme 'doom-wilmersdorf t)
+    ;;(load-theme 'doom-tomorrow-night t)
+    ;;(load-theme 'doom-mono-dark t)
+    ;;(load-theme 'doom-mono-light t)
+    ;;(load-theme 'doom-tron t)
+    ;;===============================
+    (doom-themes-visual-bell-config)
+    (doom-themes-neotree-config)
+    (doom-themes-treemacs-config)
+    (doom-themes-org-config))
+#+END_SRC
+
+** Minibuffer
+
+A fancy and fast mode-line inspired by minimalism design.
+[[https://github.com/seagle0128/doom-modeline][doom-modeline homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :hook (after-init . doom-modeline-mode)
+    :config
+    (setq inhibit-compacting-font-caches t)
+    (setq doom-modeline-project-detection 'projectile)
+    (setq doom-modeline-buffer-file-name-style 'relative-to-project)
+    (setq doom-modeline-icon (display-graphic-p))
+    (setq doom-modeline-major-mode-icon t)
+    (setq doom-modeline-major-mode-color-icon t)
+    (setq doom-modeline-buffer-state-icon t)
+    (setq doom-modeline-buffer-modification-icon t)
+    (setq doom-modeline-minor-modes (featurep 'minions))
+    (setq doom-modeline-enable-word-count nil)
+    (setq doom-modeline-buffer-encoding t)
+    (setq doom-modeline-github t)
+    (setq doom-modeline-github-interval (* 30 60))
+    (setq doom-modeline-lsp t)
+    (setq doom-modeline-env-version t)
+    (setq doom-modeline-env-enable-python t))
+#+END_SRC
+
+** Icons
+
+[[https://github.com/domtronn/all-the-icons.el][all-the-icons homepage]]
+
+#+BEGIN_SRC emacs-lisp  
+(use-package all-the-icons
+    :ensure t)
+#+END_SRC
+
+** Dashboard
+
+An extensible emacs startup screen showing you what’s most important.
+[[https://github.com/emacs-dashboard/emacs-dashboard][dashboard homepage]]
+[[https://github.com/purcell/page-break-lines][page-break-lines homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package page-break-lines
+    :ensure t
+    :config
+    (global-page-break-lines-mode))
+
+  (use-package dashboard
+    :ensure t
+    :after (all-the-icons)
+    :config
+    (dashboard-setup-startup-hook)
+    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+    ;; Set the title
+    (setq dashboard-banner-logo-title "Hello Jakub!")
+    ;; Set the banner
+    (setq dashboard-startup-banner 3)
+    ;; Value can be
+    ;; 'official which displays the official emacs logo
+    ;; 'logo which displays an alternative emacs logo
+    ;; 1, 2 or 3 which displays one of the text banners
+    ;; "path/to/your/image.png" which displays whatever image you would prefer
+
+    ;; Content is not centered by default. To center, set
+    (setq dashboard-center-content t)
+
+    ;; To disable shortcut "jump" indicators for each section, set
+    (setq dashboard-show-shortcuts nil)
+
+    ;; To customize which widgets are displayed, you can use the following snippet
+    (setq dashboard-items '( (recents  . 10)
+			     (bookmarks . 5)
+			     (projects . 5)
+			     (agenda . 5)
+			     (registers . 5)))
+  
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-set-navigator t)
+    (setq dashboard-set-init-info t)
+  
+    (dashboard-modify-heading-icons '((recents . "file-text")
+				      (bookmarks . "book")))
+
+    (setq dashboard-footer-icon (all-the-icons-octicon "dashboard"
+						       :height 1.1
+						       :v-adjust -0.05
+						       :face 'font-lock-keyword-face))
+
+    ;; Format: "(icon title help action face prefix suffix)"
+    (setq dashboard-navigator-buttons
+	  `(;; line1
+	    (
+	     ;; item 1
+	     (,(all-the-icons-octicon "mark-github" :height 1.1 :v-adjust 0.0)
+	      "Homepage"
+	      "Browse github.com"
+	      (lambda (&rest _) (browse-url "https://github.com")))
+	     ;;item 2
+	     (,(all-the-icons-octicon "info" :height 1.1 :v-adjust 0.0)
+	      ""
+	      "?/h"
+	      (lambda (&rest _) (info-emacs-manual)))
+	     ))))
+
+#+END_SRC
+
+* Small usefull packages
+** lorem-ipsum
+Add filler lorem ipsum text to Emacs
+C-c l p lorem-ipsum-insert-paragraphs
+C-c l s lorem-ipsum-insert-sentences
+C-c l l lorem-ipsum-insert-list
+[[https://github.com/jschaf/emacs-lorem-ipsum][lorem-ipsum homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lorem-ipsum
+    :ensure t
+    :config
+    (lorem-ipsum-use-default-bindings))
+#+END_SRC
+
+** which-key
+
+which-key is a minor mode for Emacs that displays the key bindings
+following your currently entered incomplete command (a prefix) in a
+popup.
+[[https://github.com/justbur/emacs-which-key][which-key homepage]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+#+END_SRC
+
+** move-text
+
+MoveText allows you to move the current line using M-up / M-down (or
+any other bindings you choose) if a region is marked, it will move the
+region instead. 
+[[https://github.com/emacsfodder/move-text][move-text homepage]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package move-text
+  :ensure t
+  :bind (("M-p" . move-text-up)
+         ("M-n" . move-text-down)))
+#+END_SRC
+
+** beacon
+
+Whenever the window scrolls a light will shine on top of your cursor
+so you know where it is.
+[[https://github.com/Malabarba/beacon][beacon homepage]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+  :ensure t
+  :init
+  (beacon-mode 1))
+#+END_SRC
+
+** spinner
+
+#+begin_src emacs-lisp
+  (use-package spinner
+    :ensure t)
+#+end_src
+
+** paradox
+
+[[https://github.com/Malabarba/paradox][paradox homepage]]
+
+#+begin_src emacs-lisp
+  (use-package paradox
+    :ensure t
+    :config
+    (paradox-enable))
+#+end_src
+
+* Org customization
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+  (use-package org-beautify-theme
+    :ensure t)
+
+  (use-package org-ref
+    :ensure t)
+#+end_src
+* Search improvements  
+** Ivy\counsel\swiper
+Ivy, a generic completion mechanism for Emacs.
+Counsel, a collection of Ivy-enhanced versions of common Emacs commands.
+Swiper, an Ivy-enhanced alternative to isearch.
+[[https://github.com/abo-abo/swiper][ivy\counsel\swiper homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :ensure t)
+
+  (use-package ivy
+    :ensure t
+    :diminish (ivy-mode)
+    :bind (("C-x b" . ivy-switch-buffer))
+    :config
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffer t)
+    (setq ivy-display-style 'fancy))
+
+  (use-package swiper
+    :ensure t
+    :bind (("C-s" . swiper)
+           ;;("C-c C-r" . ivy-resume)
+           ("M-x" . counsel-M-x)
+           ("C-x C-f" . counsel-find-file)))
+#+END_SRC
+
+** Avy
+avy is a GNU Emacs package for jumping to visible text using a char-based decision tree.
+[[https://github.com/abo-abo/avy][avy homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t
+    :bind ("M-s" . avy-goto-char))
+#+END_SRC
+
+* Editor improvements
+** Basic improvements
+
+#+begin_src emacs-lisp
+  (setq c-basic-offset 4)
+  (setq tab-width 4)
+#+end_src
+
+** Template texts by YASnippet
+
+YASnippet is a template system for Emacs. It allows you to type an
+abbreviation and automatically expand it into function templates.
+[[https://github.com/joaotavora/yasnippet][yasnippet homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :hook
+    (prog-mode . yas-minor-mode)
+    (org-mode . yas-minor-mode)
+    :config
+    (yas-reload-all))
+
+  (use-package yasnippet-snippets
+    :ensure t
+    :after (yasnippet))
+
+  (use-package yasnippet-classic-snippets
+    :ensure t
+    :after (yasnippet))
+#+END_SRC
+
+** Smart hungry delete
+
+Delete whitespace between words, parenthesis and other delimiters in a
+smart (dumb) way.
+[[https://github.com/hrehfeld/emacs-smart-hungry-delete][smart-hungry-delete homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-hungry-delete
+    :ensure t
+    :bind (;;("<backspace>" . smart-hungry-delete-backward-char)
+	   ;;smart-hungry-delete-backward-char leads to error in minibuffer
+	   ;;Text is read only ??
+	   ("C-d" . smart-hungry-delete-forward-char))
+    :defer nil ;; dont defer so we can add our functions to hooks 
+    :hook
+    ((prog-mode . smart-hungry-delete-default-prog-mode-hook)
+     (c-mode-common . smart-hungry-delete-default-c-mode-common-hook)
+     (python-mode . smart-hungry-delete-default-c-mode-common-hook)
+     (text-mode . smart-hungry-delete-default-text-mode-hook)))
+#+END_SRC
+
+** Smart parens
+
+Smartparens is a minor mode for dealing with pairs in Emacs.
+[[https://github.com/Fuco1/smartparens][Smartparens homepage]]
+[[https://matthewbauer.us/bauer/#packages][smartparens configuration]]
+
+#+begin_src emacs-lisp
+    (use-package smartparens
+      :ensure t
+      :preface
+      (autoload 'sp-local-pair "smartparens")
+      (autoload 'sp-local-tag "smartparens")
+      :hook
+      (((prog-mode
+         web-mode
+         html-mode) . smartparens-mode)
+       ((prog-mode
+         emacs-lisp-mode
+         inferior-emacs-lisp-mode
+         ielm-mode
+         lisp-mode
+         inferior-lisp-mode
+         lisp-interaction-mode
+         eval-expression-minibuffer-setup) . smartparens-strict-mode)
+       ((prog-mode
+         emacs-lisp-mode
+         inferior-emacs-lisp-mode
+         ielm-mode
+         lisp-mode
+         inferior-lisp-mode
+         lisp-interaction-mode
+         org-mode) . show-smartparens-mode))
+      :bind
+      (:map smartparens-mode-map
+            ("C-M-f" . sp-forward-sexp)
+            ("C-M-b" . sp-backward-sexp)
+            ("C-M-u" . sp-backward-up-sexp)
+            ("C-M-d" . sp-down-sexp)
+            ("C-M-p" . sp-backward-down-sexp)
+            ("C-M-n" . sp-up-sexp)
+            ("M-s" . sp-splice-sexp) 
+            ("M-<up>" . sp-splice-sexp-killing-backward)
+            ("M-<down>" . sp-splice-sexp-killing-forward)
+            ("M-r" . sp-splice-sexp-killing-around)
+            ("M-(" . sp-wrap-round)
+            ("C-)" . sp-forward-slurp-sexp)
+            ("C-<right>" . sp-forward-slurp-sexp)
+            ("C-}" . sp-forward-barf-sexp)
+            ("C-<left>" . sp-forward-barf-sexp)
+            ("C-(" . sp-backward-slurp-sexp)
+            ("C-M-<left>" . sp-backward-slurp-sexp)
+            ("C-{" . sp-backward-barf-sexp)
+            ("C-M-<right>" . sp-backward-barf-sexp)
+            ("M-S" . sp-split-sexp)
+            ("M-j" . sp-join-sexp))     
+      :custom
+      (sp-escape-quotes-after-insert nil)
+      :config
+      (autoload 'sp-with-modes "smartparens" "" nil 'macro)
+      (use-package smartparens-config
+        :ensure nil
+        :demand)
+
+      (sp-with-modes 'org-mode
+        (sp-local-pair "*" "*"
+                       :actions '(insert wrap)
+                       :unless '(sp-point-after-word-p sp-point-at-bol-p)
+                       :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
+        (sp-local-pair "_" "_" :unless '(sp-point-after-word-p)
+                       :wrap "C-_")
+        (sp-local-pair "/" "/" :unless '(sp-point-after-word-p)
+                       :post-handlers '(("[d1]" "SPC")))
+        (sp-local-pair "~" "~" :unless '(sp-point-after-word-p)
+                       :post-handlers '(("[d1]" "SPC")))
+        (sp-local-pair "=" "=" :unless '(sp-point-after-word-p)
+                       :post-handlers '(("[d1]" "SPC")))
+        (sp-local-pair "«" "»"))
+
+      (sp-with-modes '(java-mode c++-mode)
+        (sp-local-pair "{" nil
+                       :post-handlers '(("||\n[i]" "RET")))
+        (sp-local-pair "/*" "*/"
+                       :post-handlers '((" | " "SPC")
+                                        ("* ||\n[i]" "RET"))))
+
+      (sp-with-modes '(markdown-mode gfm-mode rst-mode)
+        (sp-local-pair "*" "*" :bind "C-*")
+        (sp-local-tag "2" "**" "**")
+        (sp-local-tag "s" "```scheme" "```")
+        (sp-local-tag "<"  "<_>" "</_>"
+                      :transform 'sp-match-sgml-tags))
+
+      (sp-local-pair 'emacs-lisp-mode "`" nil
+                     :when '(sp-in-string-p))
+      (sp-local-pair 'clojure-mode "`" "`"
+                     :when '(sp-in-string-p))
+      (sp-local-pair 'minibuffer-inactive-mode "'" nil
+                     :actions nil))
+#+end_src
+
+** Complete anything (company)
+
+Company is a text completion framework for Emacs. The name stands for
+"complete anything". It uses pluggable back-ends and front-ends to
+retrieve and display completion candidates.
+[[https://company-mode.github.io/][company homepage]]
+
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-ide-delay 0.0) ;;default is 0.2
+    (setq company-minimum-prefix-length 1)
+    (setq company-clang-executable "/usr/bin/clangd-9")
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous))
+#+end_src
+
+* Programming
+** General
+*** flycheck
+
+Flycheck is a modern on-the-fly syntax checking extension for GNU
+Emacs, intended as replacement for the older Flymake extension which
+is part of GNU Emacs.
+[[https://www.flycheck.org/en/latest/][flycheck homepage]]
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+#+end_src
+
+*** flycheck-pkg-config
+
+flycheck-pkg-config provides a convenient way for configuring flycheck
+to use C library headers.  It configures flycheck-clang-include-path,
+flycheck-gcc-include-path and flycheck-cppcheck-include-path
+interactively.
+[[https://github.com/Wilfred/flycheck-pkg-config][flycheck-pkg-config homepage]]
+
+#+begin_src emacs-lisp
+  (use-package flycheck-pkg-config
+    :ensure t)
+#+end_src
+** Language server protocol (lsp)
+
+[[https://microsoft.github.io/language-server-protocol/][lsp homepage]]
+[[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
+
+#+begin_src emacs-lisp
+  (setq lsp-keymap-prefix "")
+
+  (use-package lsp-mode
+    :ensure t
+    :hook ((lsp-mode . lsp-enable-which-key-integration)
+	   (prog-mode . lsp))
+    :commands lsp
+    :config
+    (setq gc-cons-threshold 100000000)
+    (setq read-process-output-max (* 1024 1024)) ;; 1mb
+    (setq lsp-idle-delay 0.500)
+    (setq lsp-clients-clangd-executable "/usr/bin/clangd-9"))
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+
+  (use-package lsp-ivy
+    :commands lsp-ivy-workspace-symbol)
+
+  (use-package lsp-treemacs
+    :commands lsp-treemacs-errors-list)
+
+  (use-package company-lsp
+    :ensure t
+    :commands company-lsp
+    :config
+    (push 'company-lsp company-backends))
+#+end_src
+
+** Cmake support
+
+[[https://www.reddit.com/r/emacs/comments/audffp/tip_how_to_use_a_stable_and_fast_environment_to/][Tutorial]] on preparing c++ programming environment.
+
+#+begin_src emacs-lisp
+  (use-package cmake-mode
+    :ensure t
+    :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
+
+  (use-package cmake-font-lock
+    :ensure t
+    :after (cmake-mode)
+    :hook (cmake-mode . cmake-font-lock-activate))
+
+  (use-package cmake-ide
+    ;;:after projectile
+    :hook (c++-mode . my/cmake-ide-find-project)
+    :preface
+    (defun my/cmake-ide-find-project ()
+      "Finds the directory of the project for cmake-ide."
+      (with-eval-after-load 'projectile
+	(setq cmake-ide-project-dir (projectile-project-root))
+	(setq cmake-ide-build-dir (concat cmake-ide-project-dir "build")))
+      (setq cmake-ide-compile-command
+	    (concat "cd " cmake-ide-build-dir " && cmake .. && make"))
+      (cmake-ide-load-db))
+
+    (defun my/switch-to-compilation-window ()
+      "Switches to the *compilation* buffer after compilation."
+      (other-window 1))
+    :bind ([remap comment-region] . cmake-ide-compile)
+    :init (cmake-ide-setup)
+    :config (advice-add 'cmake-ide-compile :after #'my/switch-to-compilation-window))
+#+end_src
+
+* End statments
+
+There is no end statment at the moment.

@@ -172,23 +172,17 @@ lisp evaluator know about things like function and symbol declarations.
   (set-default-coding-systems 'utf-8)
 #+END_SRC
 
-* Environment variables
-
-#+BEGIN_SRC emacs-lisp
-
-#+END_SRC
-
 * Config edit/reload
 
 #+BEGIN_SRC emacs-lisp
   (defun open-config ()
     (interactive)
-    (find-file "~/Projekty/forge/myinit.org"))
+    (find-file "~/projekty/forge/myinit.org"))
   (global-set-key (kbd "C-c e") 'open-config)
 
   (defun reload-config ()
     (interactive)
-    (org-babel-load-file (expand-file-name "~/Projekty/forge/myinit.org")))
+    (org-babel-load-file (expand-file-name "~/projekty/forge/myinit.org")))
   (global-set-key (kbd "C-c r") 'reload-config)
 #+END_SRC
 
@@ -781,7 +775,7 @@ lsp based on [[https://microsoft.github.io/language-server-protocol/][language s
     ((c-mode c++-mode objc-mode cuda-mode) . (lambda () (require 'ccls) (lsp)))
     :config
     (if (eq system-type 'gnu/linux)
-        (setq ccls-executable "~/Projekty/ccls/Release/ccls"))
+        (setq ccls-executable "~/projekty/ccls/Release/ccls"))
     (if (eq system-type 'windows-nt)
         (setq ccls-executable "c:/Program Files (x86)/ccls/bin/ccls.exe")))
 
@@ -804,7 +798,7 @@ lsp based on [[https://microsoft.github.io/language-server-protocol/][language s
     :ensure t
     :config
     (venv-initialize-eshell)
-    (setq venv-location "~/Projekty/python/environments/"))
+    (setq venv-location "~/projekty/python/environments/"))
 
   (use-package pytest
     :ensure t)
