@@ -277,7 +277,22 @@ so you know where it is.
   (use-package paradox
     :ensure t
     :config
-    (paradox-enable))
+    (paradox-enable)
+    (setq paradox-github-token "fcd9e7e75dc8cf55044c79163ab2abe468893332"))
+#+end_src
+
+* Small usefull functions
+
+#+begin_src emacs-lisp
+  (defun open-config ()
+    (interactive)
+    (find-file "~/projekty/forge/test.org"))
+  (global-set-key (kbd "C-c e") 'open-config)
+
+  (defun reload-config ()
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/projekty/forge/test.org")))
+  (global-set-key (kbd "C-c r") 'reload-config)
 #+end_src
 
 * Org customization
@@ -337,6 +352,19 @@ avy is a GNU Emacs package for jumping to visible text using a char-based decisi
 #+begin_src emacs-lisp
   (setq c-basic-offset 4)
   (setq tab-width 4)
+#+end_src
+
+** Google translater
+
+#+begin_src emacs-lisp
+  (use-package google-translate
+    :ensure t
+    :bind
+    ("M-o t" . google-translate-at-point)
+    ("M-o T" . google-translate-at-point-reverse)
+    :custom
+    (google-translate-default-source-language "pl")
+    (google-translate-default-target-language "en"))
 #+end_src
 
 ** Template texts by YASnippet
@@ -498,7 +526,7 @@ retrieve and display completion candidates.
     (add-hook 'after-init-hook 'global-company-mode)
     (setq company-ide-delay 0.0) ;;default is 0.2
     (setq company-minimum-prefix-length 1)
-    (setq company-clang-executable "/usr/bin/clangd-9")
+    ;;(setq company-clang-executable "/usr/bin/clang")
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
     (define-key company-active-map (kbd "C-n") #'company-select-next)
@@ -532,6 +560,15 @@ interactively.
   (use-package flycheck-pkg-config
     :ensure t)
 #+end_src
+*** projectile
+
+#+begin_src emacs-lispx
+  (use-package projectile
+    :ensure t
+    :config
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+#+end_src
+
 ** Language server protocol (lsp)
 
 [[https://microsoft.github.io/language-server-protocol/][lsp homepage]]
@@ -543,29 +580,50 @@ interactively.
   (use-package lsp-mode
     :ensure t
     :hook ((lsp-mode . lsp-enable-which-key-integration)
-	   (prog-mode . lsp))
-    :commands lsp
-    :config
-    (setq gc-cons-threshold 100000000)
-    (setq read-process-output-max (* 1024 1024)) ;; 1mb
-    (setq lsp-idle-delay 0.500)
-    (setq lsp-clients-clangd-executable "/usr/bin/clangd-9"))
+	   (prog-mode . lsp)))
 
   (use-package lsp-ui
-    :ensure t
-    :commands lsp-ui-mode)
-
-  (use-package lsp-ivy
-    :commands lsp-ivy-workspace-symbol)
-
-  (use-package lsp-treemacs
-    :commands lsp-treemacs-errors-list)
+    :ensure t)
 
   (use-package company-lsp
-    :ensure t
-    :commands company-lsp
-    :config
-    (push 'company-lsp company-backends))
+    :ensure t)
+
+  (use-package lsp-ivy
+    :ensure t)
+
+  (use-package dap-mode
+    :ensure t)
+#+end_src
+
+** C++ support
+
+*** ccls
+
+[[https://github.com/MaskRay/ccls][ccls homepage]]
+
+To allow ccls to know the dependencies of your .cpp files with your .h
+files, it is important to provide an compile.commands.json file (or a
+.ccls file) at the root of your project.
+
+For this, nothing could be easier. If like me you use a CMakeLists.txt
+file for all your C++ projects, then you just need to install the
+cmake package on your operating system and to generate the
+compile.commands.json file, you have to do:
+
+cmake -H. -BDebug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES
+ln -s Debug/compile_commands.json
+
+#+begin_src emacs-lisp
+  (use-package ccls
+	:after projectile
+	:ensure t
+	:custom
+	(ccls-args nil)
+	(ccls-executable (executable-find "~/projekty/ccls/build/ccls"))
+	(projectile-project-root-files-top-down-recurring
+	 (append '("compile-commands.json" ".ccls")
+		 projectile-project-root-files-top-down-recurring))
+	:config (push ".ccls-cache" projectile-globally-ignored-directories))
 #+end_src
 
 ** Cmake support
