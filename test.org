@@ -596,7 +596,6 @@ interactively.
 #+end_src
 
 ** C++ support
-
 *** ccls
 
 [[https://github.com/MaskRay/ccls][ccls homepage]]
@@ -659,6 +658,15 @@ ln -s Debug/compile_commands.json
     :bind ([remap comment-region] . cmake-ide-compile)
     :init (cmake-ide-setup)
     :config (advice-add 'cmake-ide-compile :after #'my/switch-to-compilation-window))
+#+end_src
+
+** Git support
+
+[[https://magit.vc/][Magit homepage]]
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t)
 #+end_src
 
 * End statments

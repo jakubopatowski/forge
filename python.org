@@ -1,0 +1,13 @@
+#+title: Python working environment
+#+author: Jakub Opatowski
+#+email: jakub.opatowski@gmail.com
+
+[[https://docs.python-guide.org/starting/install3/linux/][Installing python.]]
+[[https://packaging.python.org/guides/installing-stand-alone-command-line-tools/][Setup command line tools.]]
+
+#+begin_src bash
+sudo apt install python3 python3-pip
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath #ensure the path of the CLI application directory is on your $PATH
+pip3 install cmake-language-server
+#+end_src 
