@@ -618,7 +618,7 @@ ln -s Debug/compile_commands.json
 	:ensure t
 	:custom
 	(ccls-args nil)
-	(ccls-executable (executable-find "~/projekty/ccls/build/ccls"))
+	(ccls-executable (executable-find "~/projekty/ccls/Release/ccls"))
 	(projectile-project-root-files-top-down-recurring
 	 (append '("compile-commands.json" ".ccls")
 		 projectile-project-root-files-top-down-recurring))
@@ -641,6 +641,7 @@ ln -s Debug/compile_commands.json
 
   (use-package cmake-ide
     ;;:after projectile
+    :ensure t
     :hook (c++-mode . my/cmake-ide-find-project)
     :preface
     (defun my/cmake-ide-find-project ()
