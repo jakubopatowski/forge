@@ -58,7 +58,7 @@ with no loss of functionality!
     ;;(load-theme 'doom-dracula t)
     ;;(load-theme 'doom-ephemeral t)
     ;;(load-theme 'doom-fairy-floss t)
-    ;;(load-theme 'doom-gruvbox t)
+    (load-theme 'doom-gruvbox t)
     ;;(load-theme 'doom-horizon t)
     ;;(load-theme 'doom-Iosvkem t)
     ;;(load-theme 'doom-laserwave t)
@@ -76,7 +76,7 @@ with no loss of functionality!
     ;;(load-theme 'doom-opera-light t)
     ;;(load-theme 'doom-outrun-electric t)
     ;;(load-theme 'doom-palenight t)
-    (load-theme 'doom-peacock t)
+    ;;load-theme 'doom-peacock t)
     ;;(load-theme 'doom-rouge t)
     ;;(load-theme 'doom-snazzy t)
     ;;(load-theme 'doom-solarized-dark t)
@@ -270,7 +270,6 @@ so you know where it is.
 #+end_src
 
 ** paradox
-
 [[https://github.com/Malabarba/paradox][paradox homepage]]
 
 #+begin_src emacs-lisp
@@ -281,17 +280,27 @@ so you know where it is.
     (setq paradox-github-token "fcd9e7e75dc8cf55044c79163ab2abe468893332"))
 #+end_src
 
+** neotree
+[[https://github.com/jaypei/emacs-neotree][neotree homepage
+]]
+#+begin_src emacs-lisp
+  (use-package neotree
+    :ensure t
+    :init
+    (global-set-key [f8] 'neotree-toggle))
+#+end_src
+
 * Small usefull functions
 
 #+begin_src emacs-lisp
   (defun open-config ()
     (interactive)
-    (find-file "~/projekty/forge/test.org"))
+    (find-file "~/Projekty/forge/test.org"))
   (global-set-key (kbd "C-c e") 'open-config)
 
   (defun reload-config ()
     (interactive)
-    (org-babel-load-file (expand-file-name "~/projekty/forge/test.org")))
+    (org-babel-load-file (expand-file-name "~/Projekty/forge/test.org")))
   (global-set-key (kbd "C-c r") 'reload-config)
 #+end_src
 
@@ -540,6 +549,7 @@ retrieve and display completion candidates.
 Flycheck is a modern on-the-fly syntax checking extension for GNU
 Emacs, intended as replacement for the older Flymake extension which
 is part of GNU Emacs.
+
 [[https://www.flycheck.org/en/latest/][flycheck homepage]]
 
 #+begin_src emacs-lisp
@@ -554,6 +564,7 @@ flycheck-pkg-config provides a convenient way for configuring flycheck
 to use C library headers.  It configures flycheck-clang-include-path,
 flycheck-gcc-include-path and flycheck-cppcheck-include-path
 interactively.
+
 [[https://github.com/Wilfred/flycheck-pkg-config][flycheck-pkg-config homepage]]
 
 #+begin_src emacs-lisp
@@ -562,11 +573,29 @@ interactively.
 #+end_src
 *** projectile
 
-#+begin_src emacs-lispx
+[[https://github.com/bbatsov/projectile][projectile homepage]]
+[[https://gist.github.com/idcrook/28fd6059894cc4f03e74fc48b44da719][projectile integration with neotree]]
+
+#+begin_src emacs-lisp
   (use-package projectile
     :ensure t
     :config
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+	  (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+	  (if (neo-global--window-exists-p)
+	      (progn
+		(neotree-dir project-dir)
+		(neotree-find file-name)))
+	(message "Could not find git project root!"))))
+
+  (global-set-key (kbd "C-c C-p") 'neotree-project-dir)
 #+end_src
 
 ** Language server protocol (lsp)
@@ -618,7 +647,7 @@ ln -s Debug/compile_commands.json
 	:ensure t
 	:custom
 	(ccls-args nil)
-	(ccls-executable (executable-find "~/projekty/ccls/Release/ccls"))
+	;;(ccls-executable (executable-find "~/Projekty/ccls/Release/ccls"))
 	(projectile-project-root-files-top-down-recurring
 	 (append '("compile-commands.json" ".ccls")
 		 projectile-project-root-files-top-down-recurring))
@@ -630,35 +659,39 @@ ln -s Debug/compile_commands.json
 [[https://www.reddit.com/r/emacs/comments/audffp/tip_how_to_use_a_stable_and_fast_environment_to/][Tutorial]] on preparing c++ programming environment.
 
 #+begin_src emacs-lisp
-  (use-package cmake-mode
-    :ensure t
-    :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
+    (use-package cmake-mode
+      :ensure t
+      :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
 
-  (use-package cmake-font-lock
-    :ensure t
-    :after (cmake-mode)
-    :hook (cmake-mode . cmake-font-lock-activate))
+    (use-package cmake-font-lock
+      :ensure t
+      :after (cmake-mode)
+      :hook (cmake-mode . cmake-font-lock-activate))
 
-  (use-package cmake-ide
-    ;;:after projectile
-    :ensure t
-    :hook (c++-mode . my/cmake-ide-find-project)
-    :preface
-    (defun my/cmake-ide-find-project ()
-      "Finds the directory of the project for cmake-ide."
-      (with-eval-after-load 'projectile
-	(setq cmake-ide-project-dir (projectile-project-root))
-	(setq cmake-ide-build-dir (concat cmake-ide-project-dir "build")))
-      (setq cmake-ide-compile-command
-	    (concat "cd " cmake-ide-build-dir " && cmake .. && make"))
-      (cmake-ide-load-db))
+    (use-package cmake-ide
+      ;;:after projectile
+      :ensure t
+      :hook (c++-mode . my/cmake-ide-find-project)
+      :preface
+      (defun my/cmake-ide-find-project ()
+	"Finds the directory of the project for cmake-ide."
+	(with-eval-after-load 'projectile
+	  (setq cmake-ide-project-dir (projectile-project-root))
+	  (setq cmake-ide-build-dir (concat cmake-ide-project-dir "build")))
+	(setq cmake-ide-compile-command
+	      (concat "cd "
+		      cmake-ide-build-dir
+		      " && cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES .."
+		      " && cp -u compile_commands.json .."
+		      " && ninja all"))
+	(cmake-ide-load-db))
 
-    (defun my/switch-to-compilation-window ()
-      "Switches to the *compilation* buffer after compilation."
-      (other-window 1))
-    :bind ([remap comment-region] . cmake-ide-compile)
-    :init (cmake-ide-setup)
-    :config (advice-add 'cmake-ide-compile :after #'my/switch-to-compilation-window))
+      (defun my/switch-to-compilation-window ()
+	"Switches to the *compilation* buffer after compilation."
+	(other-window 1))
+      :bind ([remap comment-region] . cmake-ide-compile)
+      :init (cmake-ide-setup)
+      :config (advice-add 'cmake-ide-compile :after #'my/switch-to-compilation-window))
 #+end_src
 
 ** Git support
@@ -668,8 +701,7 @@ ln -s Debug/compile_commands.json
 #+begin_src emacs-lisp
   (use-package magit
     :ensure t)
-#+end_src
-
+    #+end_s
 * End statments
 
 There is no end statment at the moment.
