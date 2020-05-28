@@ -647,11 +647,22 @@ ln -s Debug/compile_commands.json
 	:ensure t
 	:custom
 	(ccls-args nil)
-	;;(ccls-executable (executable-find "~/Projekty/ccls/Release/ccls"))
+	(ccls-executable (executable-find "~/projekty/ccls/Release/ccls"))
 	(projectile-project-root-files-top-down-recurring
 	 (append '("compile-commands.json" ".ccls")
 		 projectile-project-root-files-top-down-recurring))
 	:config (push ".ccls-cache" projectile-globally-ignored-directories))
+#+end_src
+
+*** clang-format
+
+#+begin_src emacs-lisp
+  (use-package clang-format
+    :ensure t
+    :config
+    (global-set-key (kbd "C-c i") 'clang-format-region)
+    (global-set-key (kbd "C-c u") 'clang-format-buffer)
+    (setq clang-format-style-option "llvm"))
 #+end_src
 
 ** Cmake support

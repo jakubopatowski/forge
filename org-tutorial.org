@@ -1,0 +1,61 @@
+#+title: ToDo
+#+author: jakub opatowski
+#+date: 2020:05:28
+#+startup: overview
+
+(S-Tab) 
+
+* Headlines - this is top level headline (*)
+** this is second level headline (**)]
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
+ab illo inventore veritatis et quasi architecto beatae vitae dicta
+sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
+dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed
+quia non numquam eius modi tempora incidunt ut labore et dolore magnam
+aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
+
+*** this is third level headline (***)
+Nullam eu ante vel est convallis dignissim.  Fusce suscipit, wisi nec
+facilisis facilisis, est dui fermentum leo, quis tempor ligula erat
+quis odio.  Nunc porta vulputate tellus.  Nunc rutrum turpis sed pede.
+Sed bibendum.  Aliquam posuere.  Nunc aliquet, augue nec adipiscing
+interdum, lacus tellus malesuada massa, quis varius mi purus non odio.
+Pellentesque condimentum, magna ut suscipit hendrerit, ipsum augue
+
+**** this is fourth level headline (****)
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  Donec
+hendrerit tempor tellus.  Donec pretium posuere tellus.  Proin quam
+nisl, tincidunt et, mattis eget, convallis nec, purus.  Cum sociis
+natoque penatibus et magnis dis parturient montes, nascetur ridiculus
+mus.  Nulla posuere.  Donec vitae dolor.  Nullam tristique diam non
+turpis.  Cras placerat accumsan nulla.  Nullam rutrum.  Nam vestibulum
+accumsan nisl.
+
+**** another fourth level headline
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  Donec
+hendrerit tempor tellus.  Donec pretium posuere tellus.  Proin quam
+nisl, tincidunt et, mattis eget, convallis nec, purus.  Cum sociis
+natoque penatibus et magnis dis parturient montes, nascetur ridiculus
+mus.  Nulla posuere.  Donec vitae dolor.  Nullam tristique diam non
+turpis.  Cras placerat accumsan nulla.  Nullam rutrum.  Nam vestibulum
+accumsan nisl.
+
+* Tables
+
+| lp | tytul    | liczba numerow | rok rozpoczecia | rok zakonczenia |
+|----+----------+----------------+-----------------+-----------------|
+|  1 | Superman |             52 |            2011 |            2016 |
+|  2 | Batman   |             52 |            2011 |            2016 |
+
+* ToDo lists
+
+** TODO Variadic templates
+  [[https://www.youtube.com/watch?v=o1EvPhz6UNE][jason turner variadic teplates]]
+
+
+** TODO Lisp tutorial
+
+** TODO 
