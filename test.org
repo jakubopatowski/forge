@@ -155,7 +155,7 @@ An extensible emacs startup screen showing you what’s most important.
     ;; Set the title
     (setq dashboard-banner-logo-title "Hello Jakub!")
     ;; Set the banner
-    (setq dashboard-startup-banner 3)
+    (setq dashboard-startup-banner 'logo)
     ;; Value can be
     ;; 'official which displays the official emacs logo
     ;; 'logo which displays an alternative emacs logo
@@ -712,7 +712,18 @@ ln -s Debug/compile_commands.json
 #+begin_src emacs-lisp
   (use-package magit
     :ensure t)
-    #+end_s
+#+end_src
+
+** Python support
+
+jupyter
+
+#+begin_src emacs-lisp 
+  (use-package ein
+    :ensure t)
+#+end_src
+
+
 * End statments
 
 There is no end statment at the moment.
