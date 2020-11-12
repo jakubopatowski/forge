@@ -30,7 +30,10 @@ There are two things you can do about this warning:
   (package-install 'use-package))
 
 ;;(org-babel-load-file (expand-file-name "~/projekty/forge/myinit.org"))
-(org-babel-load-file (expand-file-name "~/projekty/forge/test.org"))
+
+(let ((gc-cons-threshold most-positive-fixnum))
+  (org-babel-load-file (expand-file-name "~/test.org"))
+  )
 
 ;;=========================================================================================================
 (custom-set-variables
@@ -40,8 +43,7 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(package-selected-packages
-   (quote
-    (yasnippet-snippets py-autopep8 virtualenvwrapper clang-format qt-pro-mode expand-region smartparens doom-modeline dictionary hungry-delete sudo-edit beacon which-key dashboard page-break-lines ccls company-lsp lsp-treemacs spinner lsp-ui rainbow-mode lsp-mode sql-indent srefactor spaceline-all-the-icons spaceline flycheck-rtags company-irony-c-headers company-rtags move-text neotree immaterial-theme multi-term cmake-mode levenshtein rtags cmake-ide company-irony flycheck-irony irony flycheck borg color-theme-sanityinc-solarized use-package try solaire-mode org-bullets doom-themes counsel auto-complete ace-window)))
+   '(yasnippet-snippets py-autopep8 virtualenvwrapper clang-format qt-pro-mode expand-region smartparens doom-modeline dictionary hungry-delete sudo-edit beacon which-key dashboard page-break-lines ccls company-lsp lsp-treemacs spinner lsp-ui rainbow-mode lsp-mode sql-indent srefactor spaceline-all-the-icons spaceline flycheck-rtags company-irony-c-headers company-rtags move-text neotree immaterial-theme multi-term cmake-mode levenshtein rtags cmake-ide company-irony flycheck-irony irony flycheck borg color-theme-sanityinc-solarized use-package try solaire-mode org-bullets doom-themes counsel auto-complete ace-window))
  '(python-shell-interpreter "python3")
  '(show-paren-mode t)
  '(tool-bar-mode nil))
@@ -50,7 +52,7 @@ There are two things you can do about this warning:
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Cascadia Code PL" :foundry "SAJA" :slant normal :weight normal :height 121 :width normal))))
+ '(default ((t (:family "Cascadia Code PL" :foundry "outline" :slant normal :weight light :height 113 :width normal))))
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
 ;;; .emacs ends here
