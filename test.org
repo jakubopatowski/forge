@@ -14,6 +14,8 @@ with no loss of functionality!
 
 * Basic setup
 
+How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][garbage collection]]?
+
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
   (tool-bar-mode -1)
@@ -31,6 +33,23 @@ with no loss of functionality!
 
   (setq w32-pass-rwindow-to-system nil)
   (setq w32-rwindow-modifier 'super) ; Right Windows key
+
+  ;; garbage collection setup
+  (defun my/minibuffer-setup-hook ()
+    (setq gc-cons-threshold most-positive-fixnum))
+
+  (defun my/minibuffer-exit-hook ()
+    (setq gc-cons-threshold 800000))
+
+  (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
+
+  ;;(setq gc-cons-threshold (* 100 1024 1024)) ;;100mb
+
+  ;;Increase the amount of data which Emacs reads from the process.
+  ;;Again the emacs default is too low 4k considering that the some of
+  ;;the language server responses are in 800k - 3M range.
+  (setq read-process-output-max (* 1024 1024)) ;;1mb
 #+END_SRC
 
 * The look
@@ -295,12 +314,12 @@ so you know where it is.
 #+begin_src emacs-lisp
   (defun open-config ()
     (interactive)
-    (find-file "~/Projekty/forge/test.org"))
+    (find-file "~/test.org"))
   (global-set-key (kbd "C-c e") 'open-config)
 
   (defun reload-config ()
     (interactive)
-    (org-babel-load-file (expand-file-name "~/Projekty/forge/test.org")))
+    (org-babel-load-file (expand-file-name "~/test.org")))
   (global-set-key (kbd "C-c r") 'reload-config)
 #+end_src
 
@@ -602,6 +621,7 @@ interactively.
 
 [[https://microsoft.github.io/language-server-protocol/][lsp homepage]]
 [[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
+It is nice to run 'M-x lsp-doctor' after lsp setup.
 
 #+begin_src emacs-lisp
   (setq lsp-keymap-prefix "")
@@ -609,7 +629,12 @@ interactively.
   (use-package lsp-mode
     :ensure t
     :hook ((lsp-mode . lsp-enable-which-key-integration)
-	   (prog-mode . lsp)))
+	   (prog-mode . lsp))
+    :config
+    (setq lsp-idle-delay 0.2)
+    (setq lsp-completion-provider :capf)
+    (setq lsp-print-performance t)
+    (setq lsp-headerline-breadcrumb-enable t))
 
   (use-package lsp-ui
     :ensure t)
@@ -625,6 +650,9 @@ interactively.
 #+end_src
 
 ** C++ support
+
+How to setup [[https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/][C++ programming]] environment.
+
 *** ccls
 
 [[https://github.com/MaskRay/ccls][ccls homepage]]
@@ -647,7 +675,7 @@ ln -s Debug/compile_commands.json
 	:ensure t
 	:custom
 	(ccls-args nil)
-	(ccls-executable (executable-find "~/projekty/ccls/Release/ccls"))
+	(ccls-executable (executable-find "~/tools/ccls.exe"))
 	(projectile-project-root-files-top-down-recurring
 	 (append '("compile-commands.json" ".ccls")
 		 projectile-project-root-files-top-down-recurring))
@@ -662,7 +690,10 @@ ln -s Debug/compile_commands.json
     :config
     (global-set-key (kbd "C-c i") 'clang-format-region)
     (global-set-key (kbd "C-c u") 'clang-format-buffer)
-    (setq clang-format-style-option "llvm"))
+    (setq clang-format-style ""))
+
+  (use-package clang-format+
+    :ensure t)
 #+end_src
 
 ** Cmake support
@@ -688,12 +719,14 @@ ln -s Debug/compile_commands.json
 	"Finds the directory of the project for cmake-ide."
 	(with-eval-after-load 'projectile
 	  (setq cmake-ide-project-dir (projectile-project-root))
-	  (setq cmake-ide-build-dir (concat cmake-ide-project-dir "build")))
+	  (setq cmake-ide-build-dir (concat cmake-ide-project-dir "build_emacs")))
 	(setq cmake-ide-compile-command
 	      (concat "cd "
 		      cmake-ide-build-dir
-		      " && cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES .."
-		      " && cp -u compile_commands.json .."
+		      " && cmake -GNinja -DCMAKE_RC_COMPILER=~/../../tools/llvm-project/Release/bin/clang.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES .."
+		      ;;" && cp -u compile_commands.json .."
+		      " && copy compile_commands.json .."
+		      " && ninja -t compdb > compile_commands2.json"
 		      " && ninja all"))
 	(cmake-ide-load-db))
 
@@ -722,7 +755,6 @@ jupyter
   (use-package ein
     :ensure t)
 #+end_src
-
 
 * End statments
 
