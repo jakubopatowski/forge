@@ -3,6 +3,21 @@ Author: Jakub Opatowski
 mailto: [[jakub.opatowski@gmail.com][jakub.opatowski@gmail.com]]
 
 * Introduction
+** How to setup HOME dir for emacs?
+
+Recipie is [[https://www.reddit.com/r/emacs/comments/a6ka23/change_home_folder_location_windows/][here]].
+Abstract:
+1. Create site-start.el in one of the default Lisp library paths.
+I chose emacs\share\emacs\site-lisp\site-start.el. You can use C-h v load-path <RET> to find others.
+2. Put this function inside it.
+(defun set-home-dir (dir)
+  "Set a new HOME directory. This is where Emacs will look for init files and
+   where '~' will default to."
+  (setenv "HOME" dir)
+  (message (format "HOME location is %s" (getenv "HOME"))))
+
+(set-home-dir "C:/Dropbox/Apps/emacs/")
+
 ** How to use 'use-package'?
 
 [[https://github.com/jwiegley/use-package][use-package homepage]]
@@ -407,6 +422,7 @@ abbreviation and automatically expand it into function templates.
     :hook
     (prog-mode . yas-minor-mode)
     (org-mode . yas-minor-mode)
+    (markdown-mode . yas-minor-mode)
     :config
     (yas-reload-all))
 
@@ -830,7 +846,7 @@ ln -s Debug/compile_commands.json
 	(setq cmake-ide-compile-command
 	      (concat "cd "
 		      cmake-ide-build-dir
-		      " && cmake -GNinja -DCMAKE_RC_COMPILER=~/../../tools/llvm-project/Release/bin/clang.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES .."
+		      " && cmake -GNinja -DCMAKE_RC_COMPILER=clang.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES .."
 		      ;;" && cp -u compile_commands.json .."
 		      " && copy compile_commands.json .."
 		      " && ninja -t compdb > compile_commands2.json"
