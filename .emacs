@@ -43,7 +43,7 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(package-selected-packages
-   '(treemacs-persp treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil yasnippet-snippets py-autopep8 virtualenvwrapper clang-format qt-pro-mode expand-region smartparens doom-modeline dictionary hungry-delete sudo-edit beacon which-key dashboard page-break-lines ccls company-lsp lsp-treemacs spinner lsp-ui rainbow-mode lsp-mode sql-indent srefactor spaceline-all-the-icons spaceline flycheck-rtags company-irony-c-headers company-rtags move-text neotree immaterial-theme multi-term cmake-mode levenshtein rtags cmake-ide company-irony flycheck-irony irony flycheck borg color-theme-sanityinc-solarized use-package try solaire-mode org-bullets doom-themes counsel auto-complete ace-window))
+   '(edit-indirect treemacs-persp treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil yasnippet-snippets py-autopep8 virtualenvwrapper clang-format qt-pro-mode expand-region smartparens doom-modeline dictionary hungry-delete sudo-edit beacon which-key dashboard page-break-lines ccls company-lsp lsp-treemacs spinner lsp-ui rainbow-mode lsp-mode sql-indent srefactor spaceline-all-the-icons spaceline flycheck-rtags company-irony-c-headers company-rtags move-text neotree immaterial-theme multi-term cmake-mode levenshtein rtags cmake-ide company-irony flycheck-irony irony flycheck borg color-theme-sanityinc-solarized use-package try solaire-mode org-bullets doom-themes counsel auto-complete ace-window))
  '(python-shell-interpreter "python3")
  '(show-paren-mode t)
  '(tool-bar-mode nil))
