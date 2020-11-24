@@ -336,6 +336,14 @@ so you know where it is.
     (interactive)
     (org-babel-load-file (expand-file-name "~/test.org")))
   (global-set-key (kbd "C-c r") 'reload-config)
+
+  (defun indent-buffer ()
+    (interactive)
+    (save-excursion
+      (indent-region (point-min) (point-max) nil)))
+  (global-set-key [f12] 'indent-buffer)
+
+
 #+end_src
 
 * Org customization
@@ -406,8 +414,8 @@ avy is a GNU Emacs package for jumping to visible text using a char-based decisi
     ("M-o t" . google-translate-at-point)
     ("M-o T" . google-translate-at-point-reverse)
     :custom
-    (google-translate-default-source-language "pl")
-    (google-translate-default-target-language "en"))
+    (google-translate-default-source-language "en")
+    (google-translate-default-target-language "pl"))
 #+end_src
 
 ** Template texts by YASnippet
@@ -714,7 +722,11 @@ interactively.
   (use-package projectile
     :ensure t
     :config
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (projectile-mode +1)
+    (setq projectile-indexing-method 'hybrid)
+    (setq projectile-sort-order 'modyfication-time)
+    (setq projectile-enable-caching t))
 
   (defun neotree-project-dir ()
     "Open NeoTree using the git root."
