@@ -356,10 +356,12 @@ so you know where it is.
 [[https://github.com/jaypei/emacs-neotree][neotree homepage
 ]]
 #+begin_src emacs-lisp
-  (use-package neotree
-    :ensure t
-    :init
-    (global-set-key [f8] 'neotree-toggle))
+    (use-package neotree
+      :ensure t
+      :init
+      (global-set-key [f8] 'neotree-toggle)
+      :config
+      (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 #+end_src
 
 * Small usefull functions
