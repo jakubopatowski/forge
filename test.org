@@ -185,7 +185,8 @@ ligatures [[https://github.com/mickeynp/ligature.el][homepage]]
     ;; WARNING: not all ligatures are safe, some will make (like ++) 
     ;; c-mode-common to crash (not sure about other modes)
     (ligature-set-ligatures 'prog-mode '("www" "->" "<-" "-->" "<--" ">>" "<<" "!=" "==" "&&" "||"
-					 "--" ";;" "|=" "<!--" "~~" "ff" "fi" "ffi" "===")) 
+					 "--" ";;" "|=" "<!--" "~~" "ff" "fi" "ffi" "===" "<=" ">="
+					 "::" "/*" "*/" "</" "/>" "***")) 
     ;; does not work: "++"
     ;; (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
     ;;                                      ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
@@ -781,6 +782,13 @@ interactively.
   (global-set-key (kbd "C-c C-p") 'neotree-project-dir)
 #+end_src
 
+*** edit-indirect
+
+#+begin_src emacs-lisp
+  (use-package edit-indirect
+    :ensure t)
+#+end_src
+
 ** Language server protocol (lsp)
 
 [[https://microsoft.github.io/language-server-protocol/][lsp homepage]]
@@ -819,6 +827,21 @@ It is nice to run 'M-x lsp-doctor' after lsp setup.
 		:config
 		(setq dap-auto-configure-features '(sessions locals controls tooltip))
 		(require 'dap-gdb-lldb))
+#+end_src
+
+** Markdown
+
+markdown mode [[http://test-pokaz-all.vm-testowe.mikronika.com.pl/][homepage]]
+documentation is [[https://leanpub.com/markdown-mode/read][here]]
+
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+	   ("\\.md\\'" . markdown-mode)
+	   ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "multimarkdown"))
 #+end_src
 
 ** C++ support
