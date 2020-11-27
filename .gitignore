@@ -2,4 +2,5 @@
 myinit\.el
 test\.el
 .emacs.d
+.solargraph
 *~
