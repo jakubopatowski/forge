@@ -49,17 +49,7 @@ How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-
   (setq w32-pass-rwindow-to-system nil)
   (setq w32-rwindow-modifier 'super) ; Right Windows key
 
-  ;; garbage collection setup
-  (defun my/minibuffer-setup-hook ()
-    (setq gc-cons-threshold most-positive-fixnum))
-
-  (defun my/minibuffer-exit-hook ()
-    (setq gc-cons-threshold 800000))
-
-  (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
-
-  ;;(setq gc-cons-threshold (* 100 1024 1024)) ;;100mb
+  (setq gc-cons-threshold (* 100 1024 1024)) ;;100mb
 
   ;;Increase the amount of data which Emacs reads from the process.
   ;;Again the emacs default is too low 4k considering that the some of
@@ -238,7 +228,9 @@ An extensible emacs startup screen showing you what’s most important.
     (setq dashboard-center-content t)
 
     ;; To disable shortcut "jump" indicators for each section, set
-    (setq dashboard-show-shortcuts nil)
+    (setq dashboard-show-shortcuts t)
+
+    (setq dashboard-projects-backend 'projectile)
 
     ;; To customize which widgets are displayed, you can use the following snippet
     (setq dashboard-items '( (recents  . 10)
@@ -246,12 +238,12 @@ An extensible emacs startup screen showing you what’s most important.
 			     (projects . 5)
 			     (agenda . 5)
 			     (registers . 5)))
-  
+
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
     (setq dashboard-set-navigator t)
     (setq dashboard-set-init-info t)
-  
+
     (dashboard-modify-heading-icons '((recents . "file-text")
 				      (bookmarks . "book")))
 
@@ -616,7 +608,7 @@ retrieve and display completion candidates.
     :ensure t
     :config
     (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-ide-delay 0.0) ;;default is 0.2
+    (setq company-ide-delay 0.2) ;;default is 0.2
     (setq company-minimum-prefix-length 1)
     ;;(setq company-clang-executable "/usr/bin/clang")
     (define-key company-active-map (kbd "M-n") nil)
@@ -760,26 +752,27 @@ interactively.
 
 #+begin_src emacs-lisp
   (use-package projectile
-    :ensure t
-    :config
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (projectile-mode +1)
-    (setq projectile-indexing-method 'hybrid)
-    (setq projectile-sort-order 'modyfication-time)
-    (setq projectile-enable-caching t))
+	:ensure t
+	:config
+	(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+	(projectile-mode +1)
+	(setq projectile-indexing-method 'hybrid)
+	(setq projectile-sort-order 'modyfication-time)
+	(setq projectile-enable-caching t)
+	(setq projectile-git-submodule-command nil))
 
   (defun neotree-project-dir ()
-    "Open NeoTree using the git root."
-    (interactive)
-    (let ((project-dir (projectile-project-root))
+	"Open NeoTree using the git root."
+	(interactive)
+	(let ((project-dir (projectile-project-root))
 	  (file-name (buffer-file-name)))
-      (neotree-toggle)
-      (if project-dir
+	  (neotree-toggle)
+	  (if project-dir
 	  (if (neo-global--window-exists-p)
-	      (progn
-		(neotree-dir project-dir)
-		(neotree-find file-name)))
-	(message "Could not find git project root!"))))
+		  (progn
+			(neotree-dir project-dir)
+			(neotree-find file-name)))
+		(message "Could not find git project root!"))))
 
   (global-set-key (kbd "C-c C-p") 'neotree-project-dir)
 #+end_src
@@ -798,37 +791,41 @@ interactively.
 It is nice to run 'M-x lsp-doctor' after lsp setup.
 
 #+begin_src emacs-lisp
-	  (setq lsp-keymap-prefix "")
+  (setq lsp-keymap-prefix "")
 
-	  (use-package lsp-mode
-		:ensure t
-		:hook ((lsp-mode . (lambda ()
-				 (let ((lsp-keymap-prefix "C-c l"))
-				   (lsp-enable-which-key-integration))))
-		   (prog-mode . lsp))
-		:config
-		(setq lsp-print-performance t)
-		(setq lsp-completion-provider :capf)
-		(setq lsp-headerline-breadcrumb-enable t)
-		(define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-		:init
-		(setq lsp-idle-delay 0.2)
-		)
+  (use-package lsp-mode
+    :ensure t
+    :hook  ((lsp-mode . (lambda ()
+			  (let ((lsp-keymap-prefix "C-c l"))
+			    (lsp-enable-which-key-integration))))
+	    (prog-mode . lsp))
+    :config
+    (setq lsp-print-performance t)
+    (setq lsp-completion-provider :capf)
+    (setq lsp-headerline-breadcrumb-enable t)
+    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+    :init
+    (setq lsp-idle-delay 0.2))
 
-	  (use-package lsp-ui
-		:ensure t)
+  (use-package lsp-ui
+    :ensure t)
 
-	  (use-package company-lsp
-		:ensure t)
+  ;; (use-package company-lsp
+  ;;  :ensure t
+  ;;  :after
+  ;;  (company)
+  ;;  :config
+  ;;  (push 'company-lsp company-backends)
+  ;;  (setq company-lsp-enable-recompletion t))
 
-	  (use-package lsp-ivy
-		:ensure t)
+  (use-package lsp-ivy
+    :ensure t)
 
-	  (use-package dap-mode
-		:ensure t
-		:config
-		(setq dap-auto-configure-features '(sessions locals controls tooltip))
-		(require 'dap-gdb-lldb))
+  (use-package dap-mode
+    :ensure t
+    :config
+    (setq dap-auto-configure-features '(sessions locals controls tooltip))
+    (require 'dap-gdb-lldb))
 #+end_src
 
 ** Markdown
@@ -868,15 +865,16 @@ ln -s Debug/compile_commands.json
 
 #+begin_src emacs-lisp
   (use-package ccls
-	:after projectile
-	:ensure t
-	:custom
-	(ccls-args nil)
-	(ccls-executable (executable-find "~/tools/ccls.exe"))
-	(projectile-project-root-files-top-down-recurring
-	 (append '("compile-commands.json" ".ccls")
-		 projectile-project-root-files-top-down-recurring))
-	:config (push ".ccls-cache" projectile-globally-ignored-directories))
+    :after projectile
+    :ensure t
+    :custom
+    (ccls-args nil)
+    (ccls-executable (executable-find "~/tools/ccls.exe"))
+    (projectile-project-root-files-top-down-recurring
+     (append '("compile-commands.json" ".ccls")
+	     projectile-project-root-files-top-down-recurring))
+    :config
+    (push ".ccls-cache" projectile-globally-ignored-directories))
 #+end_src
 
 *** clang-format
@@ -921,9 +919,9 @@ ln -s Debug/compile_commands.json
 	      (concat "cd "
 		      cmake-ide-build-dir
 		      " && cmake -GNinja -DCMAKE_RC_COMPILER=clang.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=YES .."
-		      ;;" && cp -u compile_commands.json .."
+		      ;;" && ninja -t compdb > compile_commands.json"
 		      " && copy compile_commands.json .."
-		      " && ninja -t compdb > compile_commands2.json"
+		      ;;" && cp -u compile_commands_ninja.json ../compile_commands_ninja.json"
 		      " && ninja all"))
 	(cmake-ide-load-db))
 
