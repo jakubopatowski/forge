@@ -9,4 +9,5 @@ SpacesInContainerLiterals: true
 SpacesInParentheses: true
 SpacesInSquareBrackets: true
 SpacesInAngles: true
+AlwaysBreakTemplateDeclarations: Yes
 ...
