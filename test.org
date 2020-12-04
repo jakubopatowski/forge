@@ -716,6 +716,18 @@ Treeemacs [[https://github.com/Alexander-Miller/treemacs][homepage]]
   :config (treemacs-set-scope-type 'Perspectives))
 #+end_src
 
+** Check spelling
+
+#+begin_src emacs-lisp
+  (use-package flyspell
+    :config
+    (setq ispell-program-name "hunspell")
+    (setq ispell-hunspell-dict-paths-alist '(("en_GB" "~/tools/dict/en_GB.aff")))
+    (setq ispell-local-dictionary-alist '(("en_GB" "[[:alpha]]" "[^[:alpha]]" "[']" nil ("-d" "en_GB") nil utf-8)))
+    (flyspell-mode 1)
+    (global-set-key (kbd "M-\\") 'ispell-word))
+#+end_src
+
 * Programming
 ** General
 *** flycheck
@@ -818,7 +830,8 @@ It is nice to run 'M-x lsp-doctor' after lsp setup.
   ;;  (push 'company-lsp company-backends)
   ;;  (setq company-lsp-enable-recompletion t))
 
-  (use-package lsp-ivy
+  (use-package
+    lsp-ivy
     :ensure t)
 
   (use-package dap-mode
@@ -943,8 +956,35 @@ ln -s Debug/compile_commands.json
 #+end_src
 
 ** Python support
+*** python
+#+begin_src emacs-lisp
+  (setq doom-modeline-env-python-executable "python")
+  (setq python-shell-interpreter "python")
+  (setq python-shell-interpreter-args "-m IPython --simple-prompt -i")
+  (setq flycheck-python-pycompile-executable "python")
+  (setq flycheck-python-pylint-executable "python")
+  (setq flycheck-python-flake8-executable "python")
+  (setq python-indent-offset 4)
+#+end_src
 
-jupyter
+*** lsp-jedi
+#+begin_src emacs-lisp
+  (use-package lsp-jedi
+    :ensure t
+    :config
+    (with-eval-after-load "lsp-mode"
+      (add-to-list 'lsp-disabled-clients 'pyls)
+      (add-to-list 'lsp-enabled-clients 'jedi)))
+
+  ;; (use-package lsp-python-ms
+  ;;   :ensure t
+  ;;   :init (setq lsp-python-ms-auto-install-server t)
+  ;;   :hook (python-mode . (lambda ()
+  ;; 			 (require 'lsp-python-ms)
+  ;; 			 (lsp))
+  ;;		       )); or lsp-deferred
+#+end_src
+*** jupyter
 
 #+begin_src emacs-lisp 
   (use-package ein
