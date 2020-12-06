@@ -5,18 +5,24 @@ mailto: [[jakub.opatowski@gmail.com][jakub.opatowski@gmail.com]]
 * Introduction
 ** How to setup HOME dir for emacs?
 
-Recipie is [[https://www.reddit.com/r/emacs/comments/a6ka23/change_home_folder_location_windows/][here]].
+Full recipie is [[https://www.reddit.com/r/emacs/comments/a6ka23/change_home_folder_location_windows/][here]].
+
 Abstract:
-1. Create site-start.el in one of the default Lisp library paths.
-I chose emacs\share\emacs\site-lisp\site-start.el. You can use C-h v load-path <RET> to find others.
+ 1. Create site-start.el in one of the default Lisp library paths.
+  
+  I chose emacs\share\emacs\site-lisp\site-start.el. You can use C-h v load-path <RET> to find others.
+  
 2. Put this function inside it.
+
+<pre>
 (defun set-home-dir (dir)
   "Set a new HOME directory. This is where Emacs will look for init files and
-   where '~' will default to."
+where '~' will default to."
   (setenv "HOME" dir)
   (message (format "HOME location is %s" (getenv "HOME"))))
 
 (set-home-dir "C:/Dropbox/Apps/emacs/")
+</pre>
 
 ** How to use 'use-package'?
 
@@ -32,6 +38,7 @@ with no loss of functionality!" John Wiegley, use-package author
 How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][garbage collection]]?
 
 #+BEGIN_SRC emacs-lisp
+;;
   (setq inhibit-startup-message t)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
@@ -41,6 +48,7 @@ How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-
   (when window-system (global-hl-line-mode t))
   (when window-system (global-prettify-symbols-mode t))
   (setq ibuffer-expert t)
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
   ;; setup windows keymap
   (setq w32-pass-lwindow-to-system nil)
@@ -58,6 +66,10 @@ How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-
 #+END_SRC
 
 * The look
+** Font
+#+begin_src emacs-lisp
+
+#+end_src
 ** Theme
 
 [[https://github.com/hlissner/emacs-doom-themes][doom-theme homepage]]
@@ -100,7 +112,7 @@ How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-
     ;;(load-theme 'doom-opera-light t)
     ;;(load-theme 'doom-outrun-electric t)
     ;;(load-theme 'doom-palenight t)
-    ;;load-theme 'doom-peacock t)
+    ;;(load-theme 'doom-peacock t)
     ;;(load-theme 'doom-rouge t)
     ;;(load-theme 'doom-snazzy t)
     ;;(load-theme 'doom-solarized-dark t)
@@ -270,6 +282,16 @@ An extensible emacs startup screen showing you what’s most important.
 
 #+END_SRC
 
+** Line numbers
+
+#+begin_src emacs-lisp
+  ;;Disable line numbers for some modes
+  (dolist (mode '(org-mode-hook
+		  term-mode-hook
+		  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
+
 * Small usefull packages
 ** lorem-ipsum
 Add filler lorem ipsum text to Emacs
@@ -293,10 +315,12 @@ popup.
 [[https://github.com/justbur/emacs-which-key][which-key homepage]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode))
+  (use-package which-key
+    :ensure t
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :confit (setq which-key-idle-delay 0.3)
+    )
 #+END_SRC
 
 ** move-text
@@ -830,8 +854,7 @@ It is nice to run 'M-x lsp-doctor' after lsp setup.
   ;;  (push 'company-lsp company-backends)
   ;;  (setq company-lsp-enable-recompletion t))
 
-  (use-package
-    lsp-ivy
+  (use-package lsp-ivy
     :ensure t)
 
   (use-package dap-mode
@@ -968,6 +991,7 @@ ln -s Debug/compile_commands.json
 #+end_src
 
 *** lsp-jedi
+
 #+begin_src emacs-lisp
   (use-package lsp-jedi
     :ensure t
@@ -975,20 +999,6 @@ ln -s Debug/compile_commands.json
     (with-eval-after-load "lsp-mode"
       (add-to-list 'lsp-disabled-clients 'pyls)
       (add-to-list 'lsp-enabled-clients 'jedi)))
-
-  ;; (use-package lsp-python-ms
-  ;;   :ensure t
-  ;;   :init (setq lsp-python-ms-auto-install-server t)
-  ;;   :hook (python-mode . (lambda ()
-  ;; 			 (require 'lsp-python-ms)
-  ;; 			 (lsp))
-  ;;		       )); or lsp-deferred
-#+end_src
-*** jupyter
-
-#+begin_src emacs-lisp 
-  (use-package ein
-    :ensure t)
 #+end_src
 
 ** PowerShell
