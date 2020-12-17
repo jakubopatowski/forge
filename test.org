@@ -34,9 +34,22 @@ because I have over 80 packages that I use in Emacs, and things were getting
 difficult to manage. Yet with this utility my total load time is around 2 seconds, 
 with no loss of functionality!/" John Wiegley, use-package author
 
+- :init Use the :init keyword to execute code before a package is loaded.
+- :config Similarly, :config can be used to execute code after a package is loaded.
+- :bind Bind a key to primary commands within module e.g. :bind ("C-." . ace-jump-mode)
+- :hook Allows adding functions onto package hooks, e.g. :hook (prog-mode . ace-jump-mode).
+
 * Basic setup
 
+** Startup performance
+
 How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][garbage collection]]?
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold (* 100 1024 1024)) ;;100 MB
+#+end_src
+
+** rest
 
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
@@ -57,7 +70,6 @@ How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-
   (setq w32-pass-rwindow-to-system nil)
   (setq w32-rwindow-modifier 'super) ; Right Windows key
 
-  (setq gc-cons-threshold (* 100 1024 1024)) ;;100mb
 
   ;;Increase the amount of data which Emacs reads from the process.
   ;;Again the emacs default is too low 4k considering that the some of
@@ -292,27 +304,14 @@ An extensible emacs startup screen showing you what’s most important.
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
-* Small usefull packages
-** lorem-ipsum
-Add filler lorem ipsum text to Emacs
-C-c l p lorem-ipsum-insert-paragraphs
-C-c l s lorem-ipsum-insert-sentences
-C-c l l lorem-ipsum-insert-list
-[[https://github.com/jschaf/emacs-lorem-ipsum][lorem-ipsum homepage]]
-
-#+BEGIN_SRC emacs-lisp
-  (use-package lorem-ipsum
-    :ensure t
-    :config
-    (lorem-ipsum-use-default-bindings))
-#+END_SRC
-
+* Usefull packages
 ** which-key
+
+[[https://github.com/justbur/emacs-which-key][which-key homepage]]
 
 which-key is a minor mode for Emacs that displays the key bindings
 following your currently entered incomplete command (a prefix) in a
 popup.
-[[https://github.com/justbur/emacs-which-key][which-key homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
@@ -325,10 +324,11 @@ popup.
 
 ** move-text
 
+[[https://github.com/emacsfodder/move-text][move-text homepage]]
+
 MoveText allows you to move the current line using M-up / M-down (or
 any other bindings you choose) if a region is marked, it will move the
 region instead. 
-[[https://github.com/emacsfodder/move-text][move-text homepage]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package move-text
@@ -339,9 +339,11 @@ region instead.
 
 ** beacon
 
+[[https://github.com/Malabarba/beacon][beacon homepage]]
+
 Whenever the window scrolls a light will shine on top of your cursor
 so you know where it is.
-[[https://github.com/Malabarba/beacon][beacon homepage]]
+  
 
 #+BEGIN_SRC emacs-lisp
 (use-package beacon
@@ -358,15 +360,8 @@ so you know where it is.
 #+end_src
 
 ** paradox
-[[https://github.com/Malabarba/paradox][paradox homepage]]
 
-#+begin_src emacs-lisp
-  (use-package paradox
-    :ensure t
-    :config
-    (paradox-enable)
-    (setq paradox-github-token "fcd9e7e75dc8cf55044c79163ab2abe468893332"))
-#+end_src
+[[https://github.com/Malabarba/paradox][paradox homepage]]
 
 ** neotree
 [[https://github.com/jaypei/emacs-neotree][neotree homepage
@@ -380,7 +375,26 @@ so you know where it is.
       (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 #+end_src
 
-* Small usefull functions
+** helpful
+
+[[https://github.com/Wilfred/helpful][helpful]] homepage
+
+Helpful is an alternative to the built-in Emacs help that provides much more contextual information.
+
+#+begin_src emacs-lisp
+  (use-package helpful
+    :ensure t
+    :custom
+    (counsel-describe-function-function #'helpful-callable)
+    (counsel-describe-variable-function #'helpful-variable)
+    :bind
+    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-key] . helpful-key))
+#+end_src
+
+* Usefull functions
 
 #+begin_src emacs-lisp
   (defun open-config ()
@@ -398,8 +412,6 @@ so you know where it is.
     (save-excursion
       (indent-region (point-min) (point-max) nil)))
   (global-set-key [f12] 'indent-buffer)
-
-
 #+end_src
 
 * Org customization
@@ -417,14 +429,20 @@ so you know where it is.
 #+end_src
 * Search improvements  
 ** Ivy\counsel\swiper
+
 Ivy, a generic completion mechanism for Emacs.
+
 Counsel, a collection of Ivy-enhanced versions of common Emacs commands.
+
 Swiper, an Ivy-enhanced alternative to isearch.
-[[https://github.com/abo-abo/swiper][ivy\counsel\swiper homepage]]
+
+[[https://github.com/abo-abo/swiper][ivy\counsel\swiper]] homepage
 
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
-    :ensure t)
+    :ensure t
+    :bind(("M-x" . counsel-M-x)
+	  ("C-x C-f" . counsel-find-file)))
 
   (use-package ivy
     :ensure t
@@ -432,19 +450,24 @@ Swiper, an Ivy-enhanced alternative to isearch.
     :bind (("C-x b" . ivy-switch-buffer))
     :config
     (ivy-mode 1)
-    (setq ivy-use-virtual-buffer t)
-    (setq ivy-display-style 'fancy))
+ (setq ivy-use-virtual-buffer t)
+    (setq ivy-display-style 'fancy)
+    (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
+
+  (use-package ivy-rich
+    :ensure t
+    :init (ivy-rich-mode 1))
 
   (use-package swiper
     :ensure t
-    :bind (("C-s" . swiper)
-           ;;("C-c C-r" . ivy-resume)
-           ("M-x" . counsel-M-x)
-           ("C-x C-f" . counsel-find-file)))
+    :bind (("C-s" . swiper)))
 #+END_SRC
 
 ** Avy
-avy is a GNU Emacs package for jumping to visible text using a char-based decision tree.
+
+Best functionality ever. Must have!!!
+Avy is a GNU Emacs package for jumping to visible text using a char-based decision tree.
+
 [[https://github.com/abo-abo/avy][avy homepage]]
 
 #+BEGIN_SRC emacs-lisp
@@ -476,9 +499,10 @@ avy is a GNU Emacs package for jumping to visible text using a char-based decisi
 
 ** Template texts by YASnippet
 
+[[https://github.com/joaotavora/yasnippet][yasnippet]] homepage
+
 YASnippet is a template system for Emacs. It allows you to type an
 abbreviation and automatically expand it into function templates.
-[[https://github.com/joaotavora/yasnippet][yasnippet homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
@@ -501,9 +525,10 @@ abbreviation and automatically expand it into function templates.
 
 ** Smart hungry delete
 
+[[https://github.com/hrehfeld/emacs-smart-hungry-delete][smart-hungry-delete]] homepage
+
 Delete whitespace between words, parenthesis and other delimiters in a
 smart (dumb) way.
-[[https://github.com/hrehfeld/emacs-smart-hungry-delete][smart-hungry-delete homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package smart-hungry-delete
@@ -522,9 +547,10 @@ smart (dumb) way.
 
 ** Smart parens
 
-Smartparens is a minor mode for dealing with pairs in Emacs.
 [[https://github.com/Fuco1/smartparens][Smartparens homepage]]
-[[https://matthewbauer.us/bauer/#packages][smartparens configuration]]
+[[https://matthewbauer.us/bauer/#packages][Smartparens configuration]]
+
+Smartparens is a minor mode for dealing with pairs in Emacs.
 
 #+begin_src emacs-lisp
     (use-package smartparens
@@ -622,10 +648,11 @@ Smartparens is a minor mode for dealing with pairs in Emacs.
 
 ** Complete anything (company)
 
+[[https://company-mode.github.io/][company homepage]]
+
 Company is a text completion framework for Emacs. The name stands for
 "complete anything". It uses pluggable back-ends and front-ends to
 retrieve and display completion candidates.
-[[https://company-mode.github.io/][company homepage]]
 
 #+begin_src emacs-lisp
   (use-package company
@@ -755,12 +782,13 @@ Treeemacs [[https://github.com/Alexander-Miller/treemacs][homepage]]
 * Programming
 ** General
 *** flycheck
+[[https://www.flycheck.org/en/latest/][
+flycheck homepage]]
 
 Flycheck is a modern on-the-fly syntax checking extension for GNU
 Emacs, intended as replacement for the older Flymake extension which
 is part of GNU Emacs.
 
-[[https://www.flycheck.org/en/latest/][flycheck homepage]]
 
 #+begin_src emacs-lisp
   (use-package flycheck
@@ -770,17 +798,19 @@ is part of GNU Emacs.
 
 *** flycheck-pkg-config
 
+[[https://github.com/Wilfred/flycheck-pkg-config][flycheck-pkg-config]] homepage
+
 flycheck-pkg-config provides a convenient way for configuring flycheck
 to use C library headers.  It configures flycheck-clang-include-path,
 flycheck-gcc-include-path and flycheck-cppcheck-include-path
 interactively.
 
-[[https://github.com/Wilfred/flycheck-pkg-config][flycheck-pkg-config homepage]]
 
 #+begin_src emacs-lisp
   (use-package flycheck-pkg-config
     :ensure t)
 #+end_src
+
 *** projectile
 
 [[https://github.com/bbatsov/projectile][projectile homepage]]
@@ -824,44 +854,40 @@ interactively.
 
 [[https://microsoft.github.io/language-server-protocol/][lsp homepage]]
 [[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
+
 It is nice to run 'M-x lsp-doctor' after lsp setup.
 
 #+begin_src emacs-lisp
-  (setq lsp-keymap-prefix "")
+   (use-package lsp-mode
+     :ensure t
+     :commands (lsp lsp-deferred)
+     :init 
+     (setq lsp-idle-delay 0.2)
+     (setq lsp-keymap-prefix "C-c l")
+     :config
+     ;;(setq lsp-print-performance t)
+     (setq lsp-completion-provider :capf)
+     (setq lsp-headerline-breadcrumb-enable t)
+     (lsp-enable-which-key-integration t))
 
-  (use-package lsp-mode
-    :ensure t
-    :hook  ((lsp-mode . (lambda ()
-			  (let ((lsp-keymap-prefix "C-c l"))
-			    (lsp-enable-which-key-integration))))
-	    (prog-mode . lsp))
-    :config
-    (setq lsp-print-performance t)
-    (setq lsp-completion-provider :capf)
-    (setq lsp-headerline-breadcrumb-enable t)
-    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    :init
-    (setq lsp-idle-delay 0.2))
-
-  (use-package lsp-ui
-    :ensure t)
-
-  ;; (use-package company-lsp
-  ;;  :ensure t
-  ;;  :after
-  ;;  (company)
-  ;;  :config
-  ;;  (push 'company-lsp company-backends)
-  ;;  (setq company-lsp-enable-recompletion t))
+   (use-package lsp-ui
+     :ensure t
+     :hook (lsp-mode . lsp-ui-mode)
+     :config
+     (setq lsp-ui-doc-position 'buttom))
 
   (use-package lsp-ivy
     :ensure t)
 
-  (use-package dap-mode
-    :ensure t
-    :config
-    (setq dap-auto-configure-features '(sessions locals controls tooltip))
-    (require 'dap-gdb-lldb))
+   (use-package lsp-treemacs
+     :ensure t
+     :after lsp)
+
+   (use-package dap-mode
+     :ensure t
+     :config
+     (setq dap-auto-configure-features '(sessions locals controls tooltip))
+     (require 'dap-gdb-lldb))
 #+end_src
 
 ** Markdown
@@ -880,7 +906,7 @@ documentation is [[https://leanpub.com/markdown-mode/read][here]]
 #+end_src
 
 ** C++ support
-
+   
 How to setup [[https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/][C++ programming]] environment.
 
 *** ccls
@@ -903,6 +929,7 @@ ln -s Debug/compile_commands.json
   (use-package ccls
     :after projectile
     :ensure t
+    :hook (c++-mode . lsp-deferred)
     :custom
     (ccls-args nil)
     (ccls-executable (executable-find "~/tools/ccls.exe"))
@@ -980,25 +1007,13 @@ ln -s Debug/compile_commands.json
 
 ** Python support
 *** python
-#+begin_src emacs-lisp
-  (setq doom-modeline-env-python-executable "python")
-  (setq python-shell-interpreter "python")
-  (setq python-shell-interpreter-args "-m IPython --simple-prompt -i")
-  (setq flycheck-python-pycompile-executable "python")
-  (setq flycheck-python-pylint-executable "python")
-  (setq flycheck-python-flake8-executable "python")
-  (setq python-indent-offset 4)
-#+end_src
-
-*** lsp-jedi
 
 #+begin_src emacs-lisp
-  (use-package lsp-jedi
-    :ensure t
-    :config
-    (with-eval-after-load "lsp-mode"
-      (add-to-list 'lsp-disabled-clients 'pyls)
-      (add-to-list 'lsp-enabled-clients 'jedi)))
+  (use-package python-mode
+    :ensure nil
+    :hook (python-mode . lsp-deferred)
+    :custom
+    (python-shell-interpreter "python"))
 #+end_src
 
 ** PowerShell
