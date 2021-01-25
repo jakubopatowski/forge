@@ -40,7 +40,6 @@ with no loss of functionality!/" John Wiegley, use-package author
 - :hook Allows adding functions onto package hooks, e.g. :hook (prog-mode . ace-jump-mode).
 
 * Basic setup
-
 ** Startup performance
 
 How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][garbage collection]]?
@@ -61,7 +60,7 @@ How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-
   (when window-system (global-hl-line-mode t))
   (when window-system (global-prettify-symbols-mode t))
   (setq ibuffer-expert t)
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
   ;; setup windows keymap
   (setq w32-pass-lwindow-to-system nil)
@@ -952,6 +951,15 @@ ln -s Debug/compile_commands.json
 
   (use-package clang-format+
     :ensure t)
+#+end_src
+
+** Java
+
+#+begin_src emacs-lisp
+    (use-package lsp-java
+      :ensure t
+      :hook (java-mode . lsp-deferred)
+  )
 #+end_src
 
 ** Cmake support
