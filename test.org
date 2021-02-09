@@ -48,6 +48,19 @@ How to manage [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-
   (setq gc-cons-threshold (* 100 1024 1024)) ;;100 MB
 #+end_src
 
+** Automatic update
+
+#+begin_src emacs-lisp
+    (use-package auto-package-update
+      :ensure t
+      :custom
+      (auto-package-update-interval 1)
+      (auto-package-update-prompt-before-update t)
+      (auto-package-update-hide-results t)
+      :config
+      (auto-package-update-maybe))
+#+end_src
+
 ** rest
 
 #+BEGIN_SRC emacs-lisp
@@ -511,6 +524,9 @@ abbreviation and automatically expand it into function templates.
     (org-mode . yas-minor-mode)
     (markdown-mode . yas-minor-mode)
     :config
+    ;;(setq yas-snippet-dirs
+    ;;'("~/yasnippets"  ;;personal snippets
+    ;;))
     (yas-reload-all))
 
   (use-package yasnippet-snippets
@@ -942,15 +958,16 @@ ln -s Debug/compile_commands.json
 *** clang-format
 
 #+begin_src emacs-lisp
-  (use-package clang-format
-    :ensure t
-    :config
-    (global-set-key (kbd "C-c i") 'clang-format-region)
-    (global-set-key (kbd "C-c u") 'clang-format-buffer)
-    (setq clang-format-style ""))
+    (use-package clang-format
+      :ensure t
+      :config
+      (global-set-key (kbd "C-c i") 'clang-format-region)
+      (global-set-key (kbd "C-c u") 'clang-format-buffer)
+      (setq clang-format-style "file")
+      (setq clang-format-fallback-style "llvm"))
 
-  (use-package clang-format+
-    :ensure t)
+    (use-package clang-format+
+      :ensure t)
 #+end_src
 
 ** Java
