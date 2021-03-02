@@ -8,7 +8,7 @@ BraceWrapping:
     AfterStruct: false
     AfterNamespace: false
     BeforeCatch: true
-    BeforeElse:true
+    BeforeElse: true
     BeforeWhile: true
     SplitEmptyFunction: false
 ColumnLimit: 120
