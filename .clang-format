@@ -12,7 +12,10 @@ BraceWrapping:
     BeforeWhile: true
     SplitEmptyFunction: false
 ColumnLimit: 120
+CompactNamespaces: false
+FixNamespaceComments: true
 IndentWidth: '4'
+NamespaceIndentation: None
 PointerAlignment: Left
 SpacesInAngles: true
 SpacesInCStyleCastParentheses: true
@@ -23,4 +26,5 @@ SpacesInSquareBrackets: true
 SpacesInAngles: true
 AlwaysBreakTemplateDeclarations: Yes
 AllowShortIfStatementsOnASingleLine: Never
+AllowShortEnumsOnASingleLine: false
 ...
